@@ -1,0 +1,22 @@
+{
+    "dockerFile": "Dockerfile",
+    "runArgs": [
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "-v",
+        "~/.ssh:/home/dev/.ssh-localhost:ro",
+        "-v",
+        "niancat-haskell-vscode-server-insiders:/home/dev/.vscode-server-insiders",
+        "-v",
+        "${localWorkspaceFolder}/.devcontainer/bashrc.d:/home/dev/.bashrc.d:ro",
+        "-v",
+        "${localWorkspaceFolder}/.devcontainer/config.d:/home/dev/.config.d:ro"
+    ],
+    // "workspaceMount": "src=${localWorkspaceFolder},dst=/niancat,type=bind,consistency=delegated",
+    // "workspaceFolder": "/niancat",
+    "extensions": [
+        "vans.haskero",
+        "sergey-kintsel.haskell-formatter-vscode-extension"
+    ],
+    "appPort": 3000
+}

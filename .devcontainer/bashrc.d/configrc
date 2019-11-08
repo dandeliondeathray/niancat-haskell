@@ -1,0 +1,3 @@
+if [ -d ~/.config.d/git ]; then
+    cat ~/.config.d/git/* > ~/.gitconfig
+fi
