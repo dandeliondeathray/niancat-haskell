@@ -1,0 +1,79 @@
+name:                niancat
+version:             0.1.0.0
+github:              "dandeliondeathray/niancat-micro"
+license:             Apache-2.0
+author:              "Tomas Aschan"
+maintainer:          "1550920+tomasaschan@users.noreply.github.com"
+copyright:           "2019 Tomas Aschan"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/niancat#readme>
+
+dependencies:
+- base
+
+library:
+  source-dirs: src/lib
+  dependencies:
+    - aeson
+    - scotty
+    - text
+    - vector
+    - wai
+
+executables:
+  niancat-exe:
+    main:                Main.hs
+    source-dirs:         src/app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - niancat
+    - scotty
+
+tests:
+  niancat-test:
+    main:                Spec.hs
+    source-dirs:         test/lib
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - niancat
+
+    - aeson
+    - text
+    - scotty
+
+    - hspec
+    - hspec-discover
+    - hspec-wai
+    - hspec-wai-json
+    - QuickCheck
+    - quickcheck-instances
+
+default-extensions:
+- OverloadedStrings
+- ScopedTypeVariables
+- FlexibleInstances
+# - GeneralizedNewtypeDeriving
+# - ConstraintKinds
+# - FlexibleContexts
+# - NoImplicitPrelude
+# - DataKinds
+# - DeriveGeneric
+# - DuplicateRecordFields
+# - TypeApplications
+# - ScopedTypeVariables

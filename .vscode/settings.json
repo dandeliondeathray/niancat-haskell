@@ -1,0 +1,7 @@
+{
+    "haskero.intero.startupParams": [
+        "--no-build",
+        "--no-load"
+    ],
+    "hoogle-vscode.url": "http://hoogle.haskell.org/"
+}
