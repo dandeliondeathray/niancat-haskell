@@ -8,7 +8,7 @@ import           Features.SolvePuzzle
 import           Features.Unsolutions
 
 import           Data.Aeson
-import           Data.Text
+import           Data.Text.Lazy
 import           Data.Typeable
 
 import           Test.Hspec
@@ -49,6 +49,6 @@ spec = do
     prop "SubmitUnsolution" $ \(user :: Text, text :: Text) ->
       let input = encode $ object ["text" .= text]
           expected = SubmitUnsolution (User user) text
-          parsed = eitherDecode $ input
+          parsed = eitherDecode input
           result = fmap (flip ($) user) parsed
        in result `shouldBe` Right expected

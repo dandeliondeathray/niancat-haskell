@@ -1,8 +1,8 @@
 module Main where
 
-import           Application
+import           Service
 
 import           Web.Scotty
 
 main :: IO ()
-main = scotty 3000 $ niancat
+main = runNiancat

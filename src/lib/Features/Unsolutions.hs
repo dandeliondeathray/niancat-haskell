@@ -1,9 +1,13 @@
 module Features.Unsolutions where
 
 import           Data.Aeson
-import           Data.Text
+import           Data.Text.Lazy
 
 import           Application
+
+data SubmitUnsolution =
+  SubmitUnsolution User Text
+  deriving (Show, Eq)
 
 instance FromJSON (Text -> SubmitUnsolution) where
   parseJSON =

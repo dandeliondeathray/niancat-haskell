@@ -25,10 +25,14 @@ library:
   source-dirs: src/lib
   dependencies:
     - aeson
+    - data-default-class
+    - mtl
     - scotty
+    - stm
     - text
     - vector
     - wai
+    - wai-extra
 
 executables:
   niancat-exe:
@@ -54,6 +58,9 @@ tests:
     - niancat
 
     - aeson
+    - data-default-class
+    - mtl
+    - stm
     - text
     - scotty
 
@@ -65,10 +72,10 @@ tests:
     - quickcheck-instances
 
 default-extensions:
+- FlexibleInstances
+- GeneralizedNewtypeDeriving
 - OverloadedStrings
 - ScopedTypeVariables
-- FlexibleInstances
-# - GeneralizedNewtypeDeriving
 # - ConstraintKinds
 # - FlexibleContexts
 # - NoImplicitPrelude

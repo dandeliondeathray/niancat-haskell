@@ -1,7 +1,7 @@
 module Features.SolvePuzzle where
 
 import           Data.Aeson
-import           Data.Text
+import           Data.Text.Lazy
 
 import           Application
 
