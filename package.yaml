@@ -26,6 +26,7 @@ library:
   dependencies:
     - aeson
     - data-default-class
+    - http-types
     - mtl
     - scotty
     - stm
@@ -74,6 +75,7 @@ tests:
 default-extensions:
 - FlexibleInstances
 - GeneralizedNewtypeDeriving
+- MultiParamTypeClasses
 - OverloadedStrings
 - ScopedTypeVariables
 # - ConstraintKinds

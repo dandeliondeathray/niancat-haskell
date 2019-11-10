@@ -1,24 +1,30 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 module Features.Hello where
 
 import           Application
 import           Web
 
+import           Data.Maybe
 import           Data.Text.Lazy
-import           Web.Scotty.Trans
 
 data Hello =
   Hello Text
 
-instance Query Hello where
-  resolve _ (Hello who) = [Reply (mconcat ["Hello, ", who, "!"])]
+data Greeting =
+  Greeting Text
+
+instance Query Hello Greeting where
+  resolve (Hello who) _ = Greeting who
+
+instance Response Greeting where
+  messages (Greeting who) _ = [Reply (mconcat ["Hello, ", who, "!"])]
 
 instance FromRequest Hello where
   parse = do
-    return $ Hello "niancat"
+    who <- param "who"
+    return . Hello $ fromMaybe "niancat" who
 
-hello :: ScottyT Text WebM ()
+hello :: Handler
 hello = do
-  get "/" $ do
-    q <- parse :: Parsed Hello
-    s <- webM $ getState
-    json $ resolve s q
+  query GET "/" (parse :: Parser Hello) (resolve :: Resolver Hello Greeting)

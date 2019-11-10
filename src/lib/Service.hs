@@ -21,16 +21,10 @@ import           Prelude
 
 import           Web.Scotty.Trans
 
-niancat :: ScottyT Text WebM ()
+niancat :: Handler
 niancat = do
   hello
 
--- get "/plusone" $ do
---   webM $ modify $ \st -> st {puzzle = tickCount st + 1}
---   redirect "/"
--- get "/plustwo" $ do
---   webM $ modify $ \st -> st {tickCount = tickCount st + 2}
---   redirect "/"
 runNiancat :: IO ()
 runNiancat = do
   sync <- newTVarIO def :: IO (TVar NiancatState)

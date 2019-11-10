@@ -1,9 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE UndecidableInstances  #-}
 
 module Application where
 
-import           Control.Monad.State
 import           Data.Aeson
 import           Data.Default.Class
 import           Data.Text.Lazy
@@ -22,24 +20,18 @@ data NiancatState =
 instance Default NiancatState where
   def = State {puzzle = Nothing}
 
-class Command a where
-  apply :: NiancatState -> a -> (NiancatState, [Message])
+class Response b =>
+      Command a b
+  where
+  apply :: a -> NiancatState -> (NiancatState, b)
 
-class Query a where
-  resolve :: NiancatState -> a -> [Message]
+class Response b =>
+      Query a b
+  where
+  resolve :: a -> NiancatState -> b
 
-acceptCommand :: Command c => c -> State NiancatState [Message]
-acceptCommand c = do
-  s <- get
-  let (s', msgs) = apply s c
-  put s'
-  return msgs
-
-acceptQuery :: Query q => q -> State NiancatState [Message]
-acceptQuery q = do
-  s <- get
-  let msgs = resolve s q
-  return msgs
+class Response a where
+  messages :: a -> NiancatState -> [Message]
 
 data Message
   = Notification Text
