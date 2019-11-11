@@ -5,6 +5,7 @@ module Puzzle
 import           Data.List      (sort)
 import           Data.Text.Lazy hiding (filter)
 import           GHC.Exts
+import           TextShow
 
 data Puzzle =
   Puzzle Text
@@ -30,5 +31,9 @@ instance Eq Puzzle where
       shrink :: Text -> Text
       shrink = fromList . sort . toList . canonicalize
 
+instance TextShow Puzzle where
+  showb (Puzzle x) =
+    fromLazyText . intercalate " " . chunksOf 3 . canonicalize $ x
+
 instance Show Puzzle where
-  show (Puzzle x) = toList . intercalate " " . chunksOf 3 . canonicalize $ x
+  show = toString . showb

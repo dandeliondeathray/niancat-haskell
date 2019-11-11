@@ -31,6 +31,7 @@ library:
     - scotty
     - stm
     - text
+    - text-show
     - vector
     - wai
     - wai-extra
@@ -63,6 +64,7 @@ tests:
     - mtl
     - stm
     - text
+    - text-show
     - scotty
 
     - hspec
