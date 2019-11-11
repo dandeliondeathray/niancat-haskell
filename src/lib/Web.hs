@@ -70,7 +70,7 @@ query method route parse resolve = do
     q <- parse
     s <- getState
     let r = resolve q s
-    json $ messages r s
+    json $ messages r
 
 command ::
      (Response b, Command a b)
@@ -85,4 +85,4 @@ command method route parse apply = do
     s <- getState
     let (s', r) = apply c s
     webM $ updateState s'
-    json $ messages r s'
+    json $ messages r

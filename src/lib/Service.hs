@@ -4,6 +4,7 @@
 module Service where
 
 import           Application
+import           Features.GetPuzzle
 import           Features.Hello
 import           Web
 
@@ -24,6 +25,7 @@ import           Web.Scotty.Trans
 niancat :: Handler
 niancat = do
   hello
+  getPuzzle
 
 runNiancat :: IO ()
 runNiancat = do

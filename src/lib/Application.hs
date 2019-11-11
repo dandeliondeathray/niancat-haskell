@@ -31,7 +31,7 @@ class Response b =>
   resolve :: a -> NiancatState -> b
 
 class Response a where
-  messages :: a -> NiancatState -> [Message]
+  messages :: a -> [Message]
 
 data Message
   = Notification Text

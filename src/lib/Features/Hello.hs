@@ -18,7 +18,7 @@ instance Query Hello Greeting where
   resolve (Hello who) _ = Greeting who
 
 instance Response Greeting where
-  messages (Greeting who) _ = [Reply (mconcat ["Hello, ", who, "!"])]
+  messages (Greeting who) = [Reply (mconcat ["Hello, ", who, "!"])]
 
 instance FromRequest Hello where
   parse = do

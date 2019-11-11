@@ -3,7 +3,7 @@ module PuzzleSpec where
 import           Puzzle
 
 import           Data.List
-import           Data.Text
+import           Data.Text.Lazy
 import           GHC.Exts
 
 import           Test.Hspec
