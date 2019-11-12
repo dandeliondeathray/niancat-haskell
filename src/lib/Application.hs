@@ -1,16 +1,25 @@
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DerivingVia           #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Application where
+module Application
+  ( module Application
+  , module Puzzle
+  ) where
 
 import           Data.Aeson
 import           Data.Default.Class
 import           Data.Text.Lazy
+import           GHC.Generics
+import           TextShow
+import           TextShow.Generic
 
 import           Puzzle
 
 data User =
   User Text
-  deriving (Show, Eq)
+  deriving (Generic, Eq)
+  deriving TextShow via FromGeneric User
 
 data NiancatState =
   State

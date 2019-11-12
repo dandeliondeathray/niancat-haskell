@@ -4,9 +4,9 @@ module SerializationSpec where
 
 import           Application
 import           Features.SetPuzzle
-import           Features.SolvePuzzle
-import           Features.Unsolutions
 
+-- import           Features.SolvePuzzle
+-- import           Features.Unsolutions
 import           Data.Aeson
 import           Data.Text.Lazy
 import           Data.Typeable
@@ -39,16 +39,16 @@ spec = do
   describe "Deserialization of commands" $ do
     prop "SetPuzzle" $ \puzzle ->
       let input = encode $object ["puzzle" .= puzzle]
-          expected = Right $ SetPuzzle puzzle
+          expected = Right $ SetPuzzle (Puzzle puzzle)
           actual = eitherDecode input
        in actual `shouldBe` expected
-    prop "SubmitSolution" $ \(user :: Text, solution :: Text) ->
-      let input = encode $ object ["user" .= user, "solution" .= solution]
-          expected = SubmitSolution (User user) solution
-       in eitherDecode input `shouldBe` Right expected
-    prop "SubmitUnsolution" $ \(user :: Text, text :: Text) ->
-      let input = encode $ object ["text" .= text]
-          expected = SubmitUnsolution (User user) text
-          parsed = eitherDecode input
-          result = fmap (flip ($) user) parsed
-       in result `shouldBe` Right expected
+  --   prop "SubmitSolution" $ \(user :: Text, solution :: Text) ->
+  --     let input = encode $ object ["user" .= user, "solution" .= solution]
+  --         expected = SubmitSolution (User user) solution
+  --      in eitherDecode input `shouldBe` Right expected
+  --   prop "SubmitUnsolution" $ \(user :: Text, text :: Text) ->
+  --     let input = encode $ object ["text" .= text]
+  --         expected = SubmitUnsolution (User user) text
+  --         parsed = eitherDecode input
+  --         result = fmap (flip ($) user) parsed
+  --      in result `shouldBe` Right expected

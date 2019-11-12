@@ -60,6 +60,7 @@ tests:
     - niancat
 
     - aeson
+    - bytestring
     - data-default-class
     - mtl
     - stm
@@ -67,6 +68,8 @@ tests:
     - text-show
     - scotty
 
+    - wai
+    - wai-extra
     - hspec
     - hspec-discover
     - hspec-wai

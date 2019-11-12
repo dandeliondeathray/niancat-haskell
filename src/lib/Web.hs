@@ -11,6 +11,7 @@ module Web
   , Handler
   , Parser
   , Resolver
+  , Applyer
   , WebM(runWebM)
   , module Network.HTTP.Types.Method
   ) where
