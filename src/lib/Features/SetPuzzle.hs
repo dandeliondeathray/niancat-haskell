@@ -15,6 +15,7 @@ data SetPuzzle =
 data SetPuzzleResponse
   = PuzzleSet Puzzle
   | SamePuzzle Puzzle
+  deriving (Show, Eq)
 
 instance FromRequest SetPuzzle where
   parse = jsonData
@@ -32,8 +33,8 @@ instance Command SetPuzzle SetPuzzleResponse where
   apply (SetPuzzle p') s =
     case puzzle s of
       Just p
-        | p /= p' -> (s', r)
-      Nothing -> (s', r)
+        | p /= p' -> (s', PuzzleSet p')
+      Nothing -> (s', PuzzleSet p')
       Just p
         | p == p' -> (s, SamePuzzle p)
     where
