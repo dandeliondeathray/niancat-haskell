@@ -3,5 +3,6 @@
         "--no-build",
         "--no-load"
     ],
-    "hoogle-vscode.url": "http://hoogle.haskell.org/"
+    "hoogle-vscode.url": "http://hoogle.haskell.org/",
+    "editor.tabSize": 2
 }
