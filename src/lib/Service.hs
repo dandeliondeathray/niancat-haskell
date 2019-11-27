@@ -24,7 +24,7 @@ niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy
 
 niancat :: TVar NiancatState -> Application
-niancat s = serve niancatAPI $ hoistServer niancatAPI (nt s) (greet :<|> (getPuzzle >>= msgs) :<|> setPuzzle)
+niancat s = serve niancatAPI $ hoistServer niancatAPI (nt s) (hello :<|> getPuzzle :<|> setPuzzle)
 
 nt :: TVar NiancatState -> AppM a -> Handler a
 nt s x = runReaderT x s

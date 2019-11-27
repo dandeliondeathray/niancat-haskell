@@ -4,9 +4,8 @@ module SerializationSpec where
 
 import           Application
 import           Features.SetPuzzle
+import           Web
 
--- import           Features.SolvePuzzle
--- import           Features.Unsolutions
 import           Data.Aeson
 import           Data.Text.Lazy
 import           Data.Typeable
@@ -34,7 +33,7 @@ spec = do
             object ["response_type" .= ("reply" :: Text), "message" .= message]
        in encode input `shouldBe` expected
   describe "Deserialization of commands" $ prop "SetPuzzle" $ \puzzle ->
-      let input = encode $object ["puzzle" .= puzzle]
+      let input = encode $ object ["puzzle" .= puzzle]
           expected = Right $ SetPuzzle (Puzzle puzzle)
           actual = eitherDecode input
        in actual `shouldBe` expected

@@ -4,27 +4,33 @@ import           Application
 
 import           Control.Concurrent.STM
 import           Control.Monad.Reader
+import           Data.Aeson
+import           Data.Text
 import           Servant
 
 type AppM = ReaderT (TVar NiancatState) Handler
 
-getState :: ReaderT (TVar a) Handler a
-getState = do
-    s <- ask
-    liftIO $ readTVarIO s
+class Response a where
+    messages :: a -> [Message]
 
-modifyState :: (a -> a) -> ReaderT (TVar a) Handler ()
-modifyState f = do
-    st <- ask
-    liftIO . atomically $ readTVar st >>= writeTVar st . f
+data Message
+    = Notification Text
+    | Reply Text
+    deriving (Show, Eq)
 
-query :: Response r => (s -> r) -> ReaderT (TVar s) Handler [Message]
+instance ToJSON Message where
+    toJSON (Notification text) =
+        object ["response_type" .= ("notification" :: Text), "message" .= text]
+    toJSON (Reply text) =
+        object ["response_type" .= ("reply" :: Text), "message" .= text]
+
+query :: Response r => (NiancatState -> r) -> AppM [Message]
 query resolver = do
     ts <- ask
     s <- liftIO $ readTVarIO ts
     return . messages $ resolver s
 
-command :: Response r => (s -> (s, r)) -> ReaderT (TVar s) Handler [Message]
+command :: Response r => (NiancatState -> (NiancatState, r)) -> AppM [Message]
 command resolver = do
     ts <- ask
     liftIO . atomically $ do

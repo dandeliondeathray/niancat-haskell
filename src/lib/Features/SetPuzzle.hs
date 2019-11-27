@@ -6,8 +6,6 @@ module Features.SetPuzzle where
 import           Application
 import           Web
 
-import           Control.Concurrent.STM
-import           Control.Monad.Reader
 import           Data.Aeson
 import           Servant
 import           TextShow
@@ -22,14 +20,14 @@ data SetPuzzleResponse
 instance FromJSON SetPuzzle where
   parseJSON = withObject "puzzle" $ \o -> SetPuzzle . Puzzle <$> o .: "puzzle"
 
-ms :: SetPuzzleResponse -> [Message]
-ms (PuzzleSet p) =
-  [Reply "OK!", Notification $ mconcat ["Dagens nia är **", showt p, "**"]]
-ms (SamePuzzle p) =
-  [Reply $ mconcat ["Nian är redan satt till ", showt p]]
+instance Response SetPuzzleResponse where
+  messages (PuzzleSet p) =
+    [Reply "OK!", Notification $ mconcat ["Dagens nia är **", showt p, "**"]]
+  messages (SamePuzzle p) =
+    [Reply $ mconcat ["Nian är redan satt till ", showt p]]
 
-app :: SetPuzzle -> NiancatState -> (NiancatState, SetPuzzleResponse)
-app (SetPuzzle p') s =
+set :: SetPuzzle -> NiancatState -> (NiancatState, SetPuzzleResponse)
+set (SetPuzzle p') s =
   case puzzle s of
     Just p
       | p == p' -> (s, SamePuzzle p)
@@ -39,13 +37,7 @@ app (SetPuzzle p') s =
     s' = s {puzzle = Just p'}
 
 setPuzzle :: SetPuzzle -> AppM [Message]
-setPuzzle cmd = do
-  ts <- ask
-  liftIO . atomically $ do
-    s <- readTVar ts
-    let (s', r) = app cmd s
-    writeTVar ts s'
-    return $ ms r
+setPuzzle = command . set
 
 type SetPuzzleAPI = "v2" :> "puzzle" :> ReqBody '[JSON] SetPuzzle :> Put '[JSON] [Message]
 setPuzzleAPI :: Proxy SetPuzzleAPI

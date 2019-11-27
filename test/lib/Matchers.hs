@@ -1,12 +1,10 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Matchers
   ( allOf
   , atLeastOneOf
   , exactly
   ) where
 
-import           Application
+import           Web
 
 import           Control.Monad
 import           Data.Aeson
@@ -36,13 +34,13 @@ allOf :: [Message] -> ResponseMatcher
 allOf msgs = makeBodyMatcher (bodyMatcher "all of" ok msgs)
   where
     ok :: [Message] -> Bool
-    ok actual = all (flip elem actual) msgs
+    ok actual = all (`elem` actual) msgs
 
 atLeastOneOf :: [Message] -> ResponseMatcher
 atLeastOneOf msgs = makeBodyMatcher (bodyMatcher "any of" ok msgs)
   where
     ok :: [Message] -> Bool
-    ok actual = any (flip elem actual) msgs
+    ok actual = any (`elem` actual) msgs
 
 exactly :: [Message] -> ResponseMatcher
 exactly msgs = makeBodyMatcher (bodyMatcher "exactly" ok msgs)
@@ -51,18 +49,17 @@ exactly msgs = makeBodyMatcher (bodyMatcher "exactly" ok msgs)
 
 bodyMatcher ::
      String -> ([Message] -> Bool) -> [Message] -> Body -> Maybe String
-bodyMatcher label ok msgs body = do
+bodyMatcher label ok msgs body =
   case eitherDecode body of
-    Right actual -> do
-      messagesMissing label msgs actual <$ guard (not $ ok actual)
+    Right actual -> messagesMissing label msgs actual <$ guard (not $ ok actual)
     Left err -> Just err
 
 messagesMissing :: String -> [Message] -> [Message] -> String
 messagesMissing allOrSome expected actual =
   unlines
     [ "some expected messages were missing"
-    , "  expected " ++ allOrSome ++ ": " ++ (show expected)
-    , "          but got: " ++ (show actual)
+    , "  expected " ++ allOrSome ++ ": " ++ show expected
+    , "          but got: " ++ show actual
     , "          missing: " ++
       (show . filter (not . flip elem actual) $ expected)
     , "            extra: " ++

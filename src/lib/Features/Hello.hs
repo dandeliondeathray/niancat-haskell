@@ -6,25 +6,23 @@ module Features.Hello where
 import           Application
 import           Web
 
+import           Data.Maybe
 import           Data.Text
 import           Servant
 
-newtype Hello = Hello Text
-
 newtype Greeting = Greeting Text
-
-instance FromHttpApiData Hello where
-  parseQueryParam p = return $ Hello p
 
 instance Response Greeting where
   messages (Greeting who) = [Reply ("Hello, "<> who<> "!")]
 
-greet :: Maybe Hello -> AppM [Message]
-greet (Just (Hello who)) = return [Reply ("Hello, " <> who <> "!")]
-greet Nothing            = return [Reply "Hello, niancat!"]
+greet :: Maybe Text -> NiancatState -> Greeting
+greet who _ = Greeting $ fromMaybe "niancat" who
 
-type HelloAPI = QueryParam "who" Hello :> Get '[JSON] [Message]
-type HelloServer = Maybe Hello -> AppM [Message]
+type HelloAPI = QueryParam "who" Text :> Get '[JSON] [Message]
+type HelloServer = Maybe Text -> AppM [Message]
 
 helloAPI :: Proxy HelloAPI
 helloAPI = Proxy
+
+hello :: Maybe Text -> AppM [Message]
+hello = query . greet
