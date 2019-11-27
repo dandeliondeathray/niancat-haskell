@@ -1,5 +1,7 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators     #-}
 
 module Service where
 
@@ -9,31 +11,30 @@ import           Features.Hello
 import           Features.SetPuzzle
 import           Web
 
-import           Control.Applicative
 import           Control.Concurrent.STM
 import           Control.Monad.Reader
 
 import           Data.Default.Class
-import           Data.String
-import           Data.Text.Lazy                       (Text)
-
 import           Network.Wai.Middleware.RequestLogger
 
-import           Prelude
+import           Network.Wai.Handler.Warp
+import           Servant
 
-import           Web.Scotty.Trans
+type NiancatAPI = HelloAPI :<|> GetPuzzleAPI :<|> SetPuzzleAPI
+niancatAPI :: Proxy NiancatAPI
+niancatAPI = Proxy
 
-niancat :: Handler
-niancat = do
-  hello
-  getPuzzle
-  setPuzzle
+niancat :: TVar NiancatState -> Application
+niancat s = serve niancatAPI $ hoistServer niancatAPI (nt s) (greet :<|> (getPuzzle >>= msgs) :<|> setPuzzle)
+
+nt :: TVar NiancatState -> AppM a -> Handler a
+nt s x = runReaderT x s
+
+server :: HasServer a '[] => TVar NiancatState -> Proxy a -> ServerT a AppM -> Application
+server s p srv = serve p $ hoistServer p (nt s) srv
 
 runNiancat :: IO ()
 runNiancat = do
-  sync <- newTVarIO def :: IO (TVar NiancatState)
-        -- 'runActionToIO' is called once per action.
-  let runActionToIO m = runReaderT (runWebM m) sync
-  scottyT 3000 runActionToIO $ do
-    middleware logStdoutDev
-    niancat
+  putStrLn "Serving niancat on port 3000"
+  st <- newTVarIO def
+  run 3000 $ logStdoutDev $ niancat st

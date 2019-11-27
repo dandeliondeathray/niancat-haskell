@@ -1,36 +1,37 @@
+{-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeOperators         #-}
 
 module Features.GetPuzzle where
 
 import           Application
-import           Puzzle
 import           Web
 
-import           Data.Maybe
-import           Data.Text.Lazy
+import           Servant
 import           TextShow
 
 data GetPuzzle =
-  GetPuzzle
+  GetPuzzle deriving(Show,Eq)
 
 data PuzzleResponse
   = CurrentPuzzle Puzzle
   | NoPuzzle
 
-instance Query GetPuzzle PuzzleResponse where
-  resolve _ = fromMaybe NoPuzzle . fmap CurrentPuzzle . puzzle
+msgs :: PuzzleResponse -> AppM [Message]
+msgs (CurrentPuzzle p) = return [Reply . showt $ p]
+msgs NoPuzzle          = return [Reply "Nian är inte satt."]
 
-instance Response PuzzleResponse where
-  messages (CurrentPuzzle p) = [Reply . showtl $ p]
-  messages NoPuzzle          = [Reply . pack $ "Nian är inte satt."]
+getPuzzle :: AppM PuzzleResponse
+getPuzzle = do
+  s <- getState
+  return $ case puzzle s of
+    Just p  -> CurrentPuzzle p
+    Nothing -> NoPuzzle
 
-instance FromRequest GetPuzzle where
-  parse = return GetPuzzle
 
-getPuzzle :: Handler
-getPuzzle =
-  query
-    GET
-    "/v2/puzzle"
-    (parse :: Parser GetPuzzle)
-    (resolve :: Resolver GetPuzzle PuzzleResponse)
+type GetPuzzleAPI = "v2" :> "puzzle" :> Get '[JSON] [Message]
+getPuzzleAPI :: Proxy GetPuzzleAPI
+getPuzzleAPI = Proxy
+
+-- getPuzzle :: TVar NiancatState -> Application
+-- getPuzzle s = feature s getPuzzleAPI (getP >>= msgs)

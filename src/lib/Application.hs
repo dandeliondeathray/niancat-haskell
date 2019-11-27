@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE DerivingVia           #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
@@ -9,22 +8,18 @@ module Application
 
 import           Data.Aeson
 import           Data.Default.Class
-import           Data.Text.Lazy
+import           Data.Text
 import           GHC.Generics
 import           TextShow
 import           TextShow.Generic
 
 import           Puzzle
 
-data User =
+newtype User =
   User Text
-  deriving (Generic, Eq)
-  deriving TextShow via FromGeneric User
+  deriving (Show, Eq)
 
-data NiancatState =
-  State
-    { puzzle :: Maybe Puzzle
-    }
+newtype NiancatState = State{puzzle :: Maybe Puzzle} deriving (Show, Eq)
 
 instance Default NiancatState where
   def = State {puzzle = Nothing}

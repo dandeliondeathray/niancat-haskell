@@ -15,9 +15,6 @@ import           Test.Hspec
 import           Test.Hspec.QuickCheck
 import           Test.QuickCheck.Instances.Text
 
-instance Typeable a => Show (Text -> a) where
-  show x = show . typeOf $ x
-
 spec :: Spec
 spec = do
   describe "Serialization of responses" $ do
@@ -36,8 +33,7 @@ spec = do
             encode $
             object ["response_type" .= ("reply" :: Text), "message" .= message]
        in encode input `shouldBe` expected
-  describe "Deserialization of commands" $ do
-    prop "SetPuzzle" $ \puzzle ->
+  describe "Deserialization of commands" $ prop "SetPuzzle" $ \puzzle ->
       let input = encode $object ["puzzle" .= puzzle]
           expected = Right $ SetPuzzle (Puzzle puzzle)
           actual = eitherDecode input
