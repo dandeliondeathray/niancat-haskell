@@ -1,6 +1,3 @@
-{-# LANGUAGE DerivingVia           #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-
 module Application
   ( module Application
   , module Puzzle
@@ -9,9 +6,6 @@ module Application
 import           Data.Aeson
 import           Data.Default.Class
 import           Data.Text
-import           GHC.Generics
-import           TextShow
-import           TextShow.Generic
 
 import           Puzzle
 
@@ -23,16 +17,6 @@ newtype NiancatState = State{puzzle :: Maybe Puzzle} deriving (Show, Eq)
 
 instance Default NiancatState where
   def = State {puzzle = Nothing}
-
-class Response b =>
-      Command a b
-  where
-  apply :: a -> NiancatState -> (NiancatState, b)
-
-class Response b =>
-      Query a b
-  where
-  resolve :: a -> NiancatState -> b
 
 class Response a where
   messages :: a -> [Message]

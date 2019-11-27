@@ -1,6 +1,5 @@
-{-# LANGUAGE DataKinds             #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeOperators         #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Features.SetPuzzle where
 
@@ -20,9 +19,6 @@ data SetPuzzleResponse
   | SamePuzzle Puzzle
   deriving (Show, Eq)
 
--- instance FromRequest SetPuzzle where
---   parse = jsonData
-
 instance FromJSON SetPuzzle where
   parseJSON = withObject "puzzle" $ \o -> SetPuzzle . Puzzle <$> o .: "puzzle"
 
@@ -36,13 +32,11 @@ app :: SetPuzzle -> NiancatState -> (NiancatState, SetPuzzleResponse)
 app (SetPuzzle p') s =
   case puzzle s of
     Just p
-      | p /= p' -> (s', PuzzleSet p')
-    Nothing -> (s', PuzzleSet p')
-    Just p
       | p == p' -> (s, SamePuzzle p)
+      | otherwise -> (s', PuzzleSet p')
+    Nothing -> (s', PuzzleSet p')
   where
     s' = s {puzzle = Just p'}
-    r = PuzzleSet p'
 
 setPuzzle :: SetPuzzle -> AppM [Message]
 setPuzzle cmd = do
@@ -56,11 +50,3 @@ setPuzzle cmd = do
 type SetPuzzleAPI = "v2" :> "puzzle" :> ReqBody '[JSON] SetPuzzle :> Put '[JSON] [Message]
 setPuzzleAPI :: Proxy SetPuzzleAPI
 setPuzzleAPI = Proxy
-
--- setPuzzle :: Handler
--- setPuzzle = do
---   command
---     PUT
---     "/v2/puzzle"
---     (parse :: Parser SetPuzzle)
---     (apply :: Applyer SetPuzzle SetPuzzleResponse)

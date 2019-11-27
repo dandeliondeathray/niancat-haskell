@@ -1,13 +1,11 @@
-{-# LANGUAGE DataKinds             #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeOperators         #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Features.Hello where
 
 import           Application
 import           Web
 
-import           Control.Concurrent.STM
 import           Data.Text
 import           Servant
 
@@ -17,9 +15,6 @@ newtype Greeting = Greeting Text
 
 instance FromHttpApiData Hello where
   parseQueryParam p = return $ Hello p
-
-instance Query Hello Greeting where
-  resolve (Hello who) _ = Greeting who
 
 instance Response Greeting where
   messages (Greeting who) = [Reply ("Hello, "<> who<> "!")]
@@ -33,6 +28,3 @@ type HelloServer = Maybe Hello -> AppM [Message]
 
 helloAPI :: Proxy HelloAPI
 helloAPI = Proxy
-
--- hello :: TVar NiancatState -> Application
--- hello s = feature s helloAPI greet

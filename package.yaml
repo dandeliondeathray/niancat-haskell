@@ -83,18 +83,5 @@ tests:
     - quickcheck-instances
 
 default-extensions:
-- DataKinds
-- TypeOperators
-# - FlexibleInstances
-# - GeneralizedNewtypeDeriving
-# - MultiParamTypeClasses
 - OverloadedStrings
-- ScopedTypeVariables
-# - ConstraintKinds
-# - FlexibleContexts
-# - NoImplicitPrelude
-# - DataKinds
-# - DeriveGeneric
-# - DuplicateRecordFields
-# - TypeApplications
 # - ScopedTypeVariables

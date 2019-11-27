@@ -1,6 +1,5 @@
-{-# LANGUAGE DataKinds             #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeOperators         #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Features.GetPuzzle where
 
@@ -32,6 +31,3 @@ getPuzzle = do
 type GetPuzzleAPI = "v2" :> "puzzle" :> Get '[JSON] [Message]
 getPuzzleAPI :: Proxy GetPuzzleAPI
 getPuzzleAPI = Proxy
-
--- getPuzzle :: TVar NiancatState -> Application
--- getPuzzle s = feature s getPuzzleAPI (getP >>= msgs)
