@@ -8,7 +8,6 @@ import           Web
 
 import           Data.Aeson
 import           Prelude     hiding (Word)
-import           Servant
 import           TextShow
 
 data SubmitSolution =
@@ -20,25 +19,22 @@ instance FromJSON SubmitSolution where
     withObject "solution" $ \v -> do
       user <- v .: "user"
       solution <- v .: "solution"
-      return $ SubmitSolution (User user) (Word solution)
+      return $ SubmitSolution (User user) (word solution)
 
 data SolutionResponse
-  = Correct
+  = Correct Word
   | Incorrect Word
   | NotSet
 
 instance Response SolutionResponse where
   messages NotSet = [Reply "Nian är inte satt än!"]
   messages (Incorrect guess) = [Reply $ "Ordet " <> showt guess <> " finns inte med i SAOL."]
+  messages (Correct guess) = [Reply $ "Ordet " <> showt guess <> " är korrekt!"]
 
-solvePuzzle :: SubmitSolution -> NiancatState -> (NiancatState, SolutionResponse)
-solvePuzzle (SubmitSolution u w) s = (s', r)
+solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> (NiancatState, SolutionResponse)
+solvePuzzle dict (SubmitSolution u w) s = (s', r)
   where
     s' = s
-    r = case puzzle s of
-       Just p  -> if solves w p then Correct else Incorrect w
+    r = case currentPuzzle s of
+       Just p  -> if solves dict w p then Correct w else Incorrect w
        Nothing -> NotSet
-
-type SolvePuzzleAPI = "v2" :> "solutions" :> ReqBody '[JSON] SubmitSolution :> Post '[JSON] [Message]
-solvePuzzleAPI :: Proxy SolvePuzzleAPI
-solvePuzzleAPI = Proxy

@@ -27,10 +27,10 @@ spec = do
   describe "in an initial state" $ do
     describe "setting the puzzle" $ do
       let s = emptyState
-      let p = Puzzle ("TRÖJAPIKÉ" :: Text)
+      let p = puzzle "TRÖJAPIKÉ"
       let cmd = SetPuzzle p
-      let (s', r) = set cmd s
-      it "updates the puzzle" $ puzzle s' `shouldBe` Just p
+      let (s', r) = setPuzzle cmd s
+      it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "responds with PuzzleSet" $ r `shouldBe` PuzzleSet p
     withS emptyState $ describe "PUT v2/puzzle" $ do
         it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "foobar"}|] `shouldRespondWith` allOf [Reply "OK!"]
@@ -38,15 +38,16 @@ spec = do
         it "stores the new puzzle" $ do
           putJson "v2/puzzle" [json|{puzzle: "TRÖJAPIKÉ"}|] `shouldRespondWith` allOf [Notification "Dagens nia är **TRÖ JAP IKE**"]
           st <- getState
-          s <- liftIO $ readTVarIO st
-          liftIO $ puzzle s `shouldBe` Just (Puzzle "TRÖJAPIKE")
+          liftIO $ do
+            s <- readTVarIO st
+            currentPuzzle s `shouldBe` Just (puzzle "TRÖJAPIKE")
   describe "with a puzzle set" $ do
-    let p = Puzzle ("TRÖJAPIKÉ" :: Text)
-    let state = State {puzzle = Just p}
+    let p = puzzle "TRÖJAPIKÉ"
+    let state = State {currentPuzzle = Just p}
     describe "setting an equivalent puzzle" $ do
-      let p' = Puzzle ("JATRÖPIKÉ" :: Text)
-      let (s', r) = set (SetPuzzle p) state
-      it "does not change the puzzle" $ puzzle s' `shouldBe` Just p
+      let p' = puzzle "JATRÖPIKÉ"
+      let (s', r) = setPuzzle (SetPuzzle p) state
+      it "does not change the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "replies with SamePuzzle" $ r `shouldBe` SamePuzzle p
       withS state $ describe "PUT /v2/puzzle" $ do
         describe "for an equivalent puzzle" $ do

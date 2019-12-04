@@ -1,9 +1,14 @@
 {-# LANGUAGE LambdaCase #-}
 
 module Puzzle
-  ( Puzzle(Puzzle),
-    Word(Word),
-    solves
+  ( Puzzle,
+    puzzle,
+    Word,
+    word,
+    Key,
+    key,
+    wkey,
+    pkey
   ) where
 
 import           Data.List      (sort)
@@ -13,10 +18,20 @@ import           Prelude        hiding (Word, unwords)
 import           TextShow
 
 newtype Puzzle = Puzzle Text
-newtype Word = Word Text
+puzzle :: Text -> Puzzle
+puzzle = Puzzle . canonicalize
 
-solves :: Word -> Puzzle -> Bool
-solves (Word w) (Puzzle p) = canonicalize w == canonicalize p
+newtype Word = Word Text
+word :: Text -> Word
+word = Word
+
+newtype Key = Key Text
+key :: Text -> Key
+key = Key . fromList . sort . toList . canonicalize
+pkey :: Puzzle -> Key
+pkey (Puzzle p) = key p
+wkey :: Word -> Key
+wkey (Word w) = key w
 
 canonicalize :: Text -> Text
 canonicalize = toUpper . clean . removeDiacritics . toCaseFold
@@ -33,19 +48,26 @@ canonicalize = toUpper . clean . removeDiacritics . toCaseFold
     clean = fromList . filter (`notElem` disallowedChars) . toList
 
 instance Eq Puzzle where
-  Puzzle a == Puzzle b = shrink a == shrink b
+  Puzzle a == Puzzle b = key a == key b
 instance Eq Word where
-  Word a == Word b = shrink a == shrink b
+  Word a == Word b = canonicalize a == canonicalize b
+instance Eq Key where
+  Key a == Key b = a == b
 
 instance TextShow Puzzle where
   showb (Puzzle x) =
     fromLazyText . unwords . chunksOf 3 . canonicalize $ x
 instance TextShow Word where
   showb (Word x) = fromLazyText . canonicalize $ x
+instance TextShow Key where
+  showb (Key x) = fromLazyText x
 instance Show Puzzle where
   show = toString . showb
 instance Show Word where
   show = toString . showb
+instance Show Key where
+  show = toString . showb
 
-shrink :: Text -> Text
-shrink = fromList . sort . toList . canonicalize
+instance Ord Key where
+  Key a <= Key b = a <= b
+

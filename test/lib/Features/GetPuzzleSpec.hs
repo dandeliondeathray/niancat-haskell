@@ -23,4 +23,4 @@ emptyState = def :: NiancatState
 
 spec = do
   describe "in an initial state" $ withS emptyState $ describe "GET /v2/puzzle" $ it "returns a message that Nian is not yet set" $ get "/v2/puzzle" `shouldRespondWith` [json|[{response_type: "reply", message: "Nian är inte satt."}]|]
-  describe "with a puzzle set" $ withS (emptyState {puzzle = Just (Puzzle "TRÖJAPIKÉ")}) $ describe "GET /v2/puzzle" $ it "returns the puzzle" $ get "/v2/puzzle" `shouldRespondWith` [json|[{response_type:"reply", message: "TRÖ JAP IKE"}]|]
+  describe "with a puzzle set" $ withS (emptyState {currentPuzzle = Just (puzzle "TRÖJAPIKÉ")}) $ describe "GET /v2/puzzle" $ it "returns the puzzle" $ get "/v2/puzzle" `shouldRespondWith` [json|[{response_type:"reply", message: "TRÖ JAP IKE"}]|]

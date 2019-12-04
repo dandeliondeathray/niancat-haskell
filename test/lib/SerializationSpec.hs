@@ -32,9 +32,9 @@ spec = do
             encode $
             object ["response_type" .= ("reply" :: Text), "message" .= message]
        in encode input `shouldBe` expected
-  describe "Deserialization of commands" $ prop "SetPuzzle" $ \puzzle ->
-      let input = encode $ object ["puzzle" .= puzzle]
-          expected = Right $ SetPuzzle (Puzzle puzzle)
+  describe "Deserialization of commands" $ prop "SetPuzzle" $ \p ->
+      let input = encode $ object ["puzzle" .= p]
+          expected = Right $ SetPuzzle (puzzle p)
           actual = eitherDecode input
        in actual `shouldBe` expected
   --   prop "SubmitSolution" $ \(user :: Text, solution :: Text) ->

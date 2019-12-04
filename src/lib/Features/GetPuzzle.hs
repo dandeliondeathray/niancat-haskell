@@ -6,7 +6,6 @@ module Features.GetPuzzle where
 import           Application
 import           Web
 
-import           Servant
 import           TextShow
 
 data GetPuzzle =
@@ -20,9 +19,5 @@ instance Response PuzzleResponse where
   messages (CurrentPuzzle p) = [Reply . showt $ p]
   messages NoPuzzle          = [Reply "Nian är inte satt."]
 
-getPuzzle :: AppM [Message]
-getPuzzle = query (maybe NoPuzzle CurrentPuzzle . puzzle)
-
-type GetPuzzleAPI = "v2" :> "puzzle" :> Get '[JSON] [Message]
-getPuzzleAPI :: Proxy GetPuzzleAPI
-getPuzzleAPI = Proxy
+getPuzzle :: NiancatState -> PuzzleResponse
+getPuzzle = maybe NoPuzzle CurrentPuzzle . currentPuzzle
