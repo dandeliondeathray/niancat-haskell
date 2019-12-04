@@ -14,9 +14,7 @@ import           Control.Concurrent.STM
 import           Control.Monad.Reader
 import           Data.Default.Class
 import           Data.Text.Lazy
-import           Web.Scotty.Trans       (scottyAppT)
 
-import           Network.Wai            (Application)
 import           Test.Hspec
 import           Test.Hspec.Wai
 import           Test.Hspec.Wai.JSON
