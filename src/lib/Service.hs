@@ -5,6 +5,7 @@
 module Service where
 
 import           Application
+import           Errors
 import           Features.GetPuzzle
 import           Features.Hello
 import           Features.SetPuzzle
@@ -31,7 +32,7 @@ niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy
 
 niancat :: Dictionary -> TVar NiancatState -> Application
-niancat dict s = serve niancatAPI $ hoistServer niancatAPI (nt s) features
+niancat dict s = errorsAsJson $ serve niancatAPI $ hoistServer niancatAPI (nt s) features
   where
     features = hello
       :<|> query getPuzzle

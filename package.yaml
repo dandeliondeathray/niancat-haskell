@@ -31,12 +31,15 @@ library:
     - -Wall
   dependencies:
     - aeson
+    - bytestring
     - data-default-class
     - http-types
     - mtl
     - stm
+    - string-conversions
     - text
     - text-show
+    - unordered-containers
     - vector
     - wai
     - wai-extra
