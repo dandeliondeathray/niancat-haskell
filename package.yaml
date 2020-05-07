@@ -34,7 +34,6 @@ library:
     - data-default-class
     - http-types
     - mtl
-    - scotty
     - stm
     - text
     - text-show
@@ -73,7 +72,6 @@ tests:
     - stm
     - text
     - text-show
-    - scotty
 
     - wai
     - wai-extra

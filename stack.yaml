@@ -1,9 +1,6 @@
-resolver: lts-14.15
-
+snapshot: lts-15.11
 packages:
 - .
 
 extra-deps:
-- hspec-wai-0.10.1
-
-system-ghc: true
+- hspec-wai-json-0.10.1
