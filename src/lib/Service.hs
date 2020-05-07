@@ -14,13 +14,13 @@ import           Web
 
 import           Control.Concurrent.STM
 import           Control.Monad.Reader
-
 import           Data.Default.Class
-import qualified Data.Map                             as Map
-import           Network.Wai.Middleware.RequestLogger
-
+import           Data.Functor
+import           Data.Maybe
 import           Network.Wai.Handler.Warp
+import           Network.Wai.Middleware.RequestLogger
 import           Servant
+import           System.Environment
 
 type NiancatAPI =
   HelloAPI
@@ -36,7 +36,7 @@ niancat dict s = errorsAsJson $ serve niancatAPI $ hoistServer niancatAPI (nt s)
   where
     features = hello
       :<|> query getPuzzle
-      :<|> command . setPuzzle
+      :<|> command . setPuzzle dict
       :<|> command . solvePuzzle dict
 
 nt :: TVar NiancatState -> AppM a -> Handler a
@@ -45,9 +45,15 @@ nt s x = runReaderT x s
 server :: HasServer a '[] => TVar NiancatState -> Proxy a -> ServerT a AppM -> Application
 server s p srv = serve p $ hoistServer p (nt s) srv
 
+getDictionary :: IO Dictionary
+getDictionary =
+  lookupEnv "DICTIONARY_FILE"
+  >>= readFile . fromMaybe "saol.txt"
+  <&> build . lines
+
 runNiancat :: IO ()
 runNiancat = do
   putStrLn "Serving niancat on port 3000"
-  let dict = Dictionary Map.empty -- TODO: initialize dictionary from file
+  dictionary <- getDictionary
   st <- newTVarIO def
-  run 3000 $ logStdoutDev $ niancat dict st
+  run 3000 . logStdoutDev $ niancat dictionary st

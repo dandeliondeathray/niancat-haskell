@@ -4,8 +4,10 @@ module Application
   , module Puzzle
   ) where
 
+import           Data.Aeson
 import           Data.Default.Class
 import           Data.Text
+import           TextShow
 
 import           Dictionary
 import           Puzzle
@@ -20,3 +22,9 @@ newtype NiancatState = State {
 
 instance Default NiancatState where
   def = State {currentPuzzle = Nothing}
+
+instance ToJSON NiancatState where
+  toJSON s = object ["puzzle" .= p]
+    where
+      p' = currentPuzzle s :: Maybe Puzzle
+      p = fmap showt p'

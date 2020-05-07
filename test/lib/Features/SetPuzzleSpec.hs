@@ -27,7 +27,7 @@ spec = do
       let s = emptyState
       let p = puzzle "TRÖJAPIKÉ"
       let cmd = SetPuzzle p
-      let (s', r) = setPuzzle cmd s
+      let (s', r) = setPuzzle testDictionary cmd s
       it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "responds with PuzzleSet" $ r `shouldBe` PuzzleSet p
     withS emptyState $ describe "PUT v2/puzzle" $ do
@@ -44,7 +44,7 @@ spec = do
     let state = State {currentPuzzle = Just p}
     describe "setting an equivalent puzzle" $ do
       let p' = puzzle "JATRÖPIKÉ"
-      let (s', r) = setPuzzle (SetPuzzle p) state
+      let (s', r) = setPuzzle testDictionary (SetPuzzle p) state
       it "does not change the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "replies with SamePuzzle" $ r `shouldBe` SamePuzzle p
       withS state $ describe "PUT /v2/puzzle" $ do

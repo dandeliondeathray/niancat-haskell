@@ -36,5 +36,5 @@ command resolver = do
     liftIO . atomically $ do
         s <- readTVar ts
         let (s', r) = resolver s
-        writeTVar ts s'
+        when (s' /= s) (writeTVar ts s')
         return $ messages r
