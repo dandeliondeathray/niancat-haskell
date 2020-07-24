@@ -1,14 +1,9 @@
 {
     "image": "docker.pkg.github.com/tomasaschan/vscode-devcontainers/haskell:0.1",
-    "runArgs": [
-        "-v",
-        "/var/run/docker.sock:/var/run/docker.sock",
-        // "-v",
-        // "~/.ssh:/home/dev/.ssh-localhost:ro",
-        "-v",
-        "${localWorkspaceFolder}/.devcontainer/bashrc.d:/home/dev/.bashrc.d:ro",
-        // "-v",
-        // "${localWorkspaceFolder}/.devcontainer/config.d:/home/dev/.config.d:ro"
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+        "source=${localEnv:HOME}/.ssh,target=/home/dev/.ssh-localhost,type=bind,readonly",
+        "source=${localWorkspaceFolder}/.devcontainer/bashrc.d,target=/home/dev/.bashrc.d,type=bind,readonly",
     ],
     "extensions": [
         "alanz.vscode-hie-server"

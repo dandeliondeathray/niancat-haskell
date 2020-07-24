@@ -1,11 +1,7 @@
-if ! [ -d ~/.ssh ]; then
-  if [ -d ~/.ssh-localhost ]; then
-    mkdir -p ~/.ssh
-    cp -r ~/.ssh-localhost/* ~/.ssh
-    chmod 700 ~/.ssh
-    chmod 600 ~/.ssh/*
-  fi
-fi
+mkdir -p ~/.ssh
+rsync -r ~/.ssh-localhost/ ~/.ssh
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/*
 
 SSH_ENV="$HOME/.ssh/environment"
 
