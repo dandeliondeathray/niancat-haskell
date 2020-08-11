@@ -16,18 +16,13 @@ have feature-parity with the Scala version.
 ## Development
 
 1. Open the `niancat-haskell` in a VS Code Remote Development environment.  
-   It will download the entire world, so go grab a coffee and a good book
+   It will download a pretty large Docker image, so go grab a coffee and a good book
    and check back every now and then.
 
-1. Once it's loaded, see if formatting seems to work. If not, you might
-   have to run `stack build hindent stylish-haskell` and/or
-   `stack install hindent stylish-haskell`.
+1. Once it's loaded, open a Haskell file and hover something to initialize the Haskell extension.  
+   This starts another round of downloading the world. You didn't finish your book already, did you?
 
-1. If auto-complete seems to be totally broken, or if you get error messages
-   about Intero crashing when you hover stuff, try `stack build intero`
-   and/or `stack install intero`.
-
-1. Once you're happy with the tooling, you'll have use for these commands:
+1. Once tooling is set up, you'll have use for these commands:
 
    - `stack build --file-watch --test` - build project and run all tests,
      and do it again if anything changes.
