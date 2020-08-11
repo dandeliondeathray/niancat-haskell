@@ -1,16 +1,16 @@
 module Matchers
-  ( allOf
-  , atLeastOneOf
-  , exactly
-  ) where
+  ( allOf,
+    atLeastOneOf,
+    exactly,
+  )
+where
 
-import           Web
-
-import           Control.Monad
-import           Data.Aeson
-import           Data.ByteString      (ByteString)
+import Control.Monad
+import Data.Aeson
+import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as LB
-import           Test.Hspec.Wai
+import Test.Hspec.Wai
+import Web
 
 instance FromJSON Message where
   parseJSON =
@@ -19,15 +19,15 @@ instance FromJSON Message where
       message <- o .: "message"
       case responseType of
         "notification" -> return $ Notification message
-        "reply"        -> return $ Reply message
-        _              -> fail ("Invalid message type " ++ responseType)
+        "reply" -> return $ Reply message
+        _ -> fail ("Invalid message type " ++ responseType)
 
 makeBodyMatcher :: (Body -> Maybe String) -> ResponseMatcher
 makeBodyMatcher matcher =
   ResponseMatcher
-    { matchStatus = 200
-    , matchHeaders = []
-    , matchBody = MatchBody (\_ body -> matcher body)
+    { matchStatus = 200,
+      matchHeaders = [],
+      matchBody = MatchBody (\_ body -> matcher body)
     }
 
 allOf :: [Message] -> ResponseMatcher
@@ -48,7 +48,7 @@ exactly msgs = makeBodyMatcher (bodyMatcher "exactly" ok msgs)
     ok actual = msgs == actual
 
 bodyMatcher ::
-     String -> ([Message] -> Bool) -> [Message] -> Body -> Maybe String
+  String -> ([Message] -> Bool) -> [Message] -> Body -> Maybe String
 bodyMatcher label ok msgs body =
   case eitherDecode body of
     Right actual -> messagesMissing label msgs actual <$ guard (not $ ok actual)
@@ -57,11 +57,11 @@ bodyMatcher label ok msgs body =
 messagesMissing :: String -> [Message] -> [Message] -> String
 messagesMissing allOrSome expected actual =
   unlines
-    [ "some expected messages were missing"
-    , "  expected " ++ allOrSome ++ ": " ++ show expected
-    , "          but got: " ++ show actual
-    , "          missing: " ++
-      (show . filter (not . flip elem actual) $ expected)
-    , "            extra: " ++
-      (show . filter (not . flip elem expected) $ actual)
+    [ "some expected messages were missing",
+      "  expected " ++ allOrSome ++ ": " ++ show expected,
+      "          but got: " ++ show actual,
+      "          missing: "
+        ++ (show . filter (not . flip elem actual) $ expected),
+      "            extra: "
+        ++ (show . filter (not . flip elem expected) $ actual)
     ]

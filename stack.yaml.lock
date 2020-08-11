@@ -11,9 +11,16 @@ packages:
       sha256: fb9e89b79cde3276baa484c860c6b9eeebdbc1a5c43301293351a25bc4c08e87
   original:
     hackage: hspec-wai-json-0.10.1
+- completed:
+    hackage: ghc-prim-0.5.3@sha256:2284e90b0d56dfd389588b5c927e7f22c17f1d6c2291464cb0cc3f9651b0ba23,2319
+    pantry-tree:
+      size: 1243
+      sha256: 0cfcb729cad4238cabfa57c5b68ae66475415237cd08c25b9fc804dd10bb8bc0
+  original:
+    hackage: ghc-prim-0.5.3
 snapshots:
 - completed:
-    size: 494638
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/11.yaml
-    sha256: 5747328cdcbb8fe9c96fc048b5566167c80dd176a41b52d3b363058e3cc1dc5d
-  original: lts-15.11
+    size: 531718
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/6.yaml
+    sha256: 230a7266fc11f76222bd3bb68e9503ed11d553060a752f164bff6753ed03e271
+  original: lts-16.6

@@ -1,17 +1,16 @@
-{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Features.SolvePuzzle where
 
-import           Application
-import           Web
+import Application
+import Data.Aeson
+import TextShow
+import Web
+import Prelude hiding (Word)
 
-import           Data.Aeson
-import           Prelude     hiding (Word)
-import           TextShow
-
-data SubmitSolution =
-  SubmitSolution User Word
+data SubmitSolution
+  = SubmitSolution User Word
   deriving (Show, Eq)
 
 instance FromJSON SubmitSolution where
@@ -36,5 +35,5 @@ solvePuzzle dict (SubmitSolution u w) s = (s', r)
   where
     s' = s
     r = case currentPuzzle s of
-       Just p  -> if solves dict w p then Correct w else Incorrect w
-       Nothing -> NotSet
+      Just p -> if solves dict w p then Correct w else Incorrect w
+      Nothing -> NotSet

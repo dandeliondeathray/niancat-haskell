@@ -1,15 +1,15 @@
-{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Features.GetPuzzle where
 
-import           Application
-import           Web
+import Application
+import TextShow
+import Web
 
-import           TextShow
-
-data GetPuzzle =
-  GetPuzzle deriving(Show,Eq)
+data GetPuzzle
+  = GetPuzzle
+  deriving (Show, Eq)
 
 data PuzzleResponse
   = CurrentPuzzle Puzzle
@@ -17,7 +17,7 @@ data PuzzleResponse
 
 instance Response PuzzleResponse where
   messages (CurrentPuzzle p) = [Reply . showt $ p]
-  messages NoPuzzle          = [Reply "Nian är inte satt."]
+  messages NoPuzzle = [Reply "Nian är inte satt."]
 
 getPuzzle :: NiancatState -> PuzzleResponse
 getPuzzle = maybe NoPuzzle CurrentPuzzle . currentPuzzle

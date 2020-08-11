@@ -1,13 +1,12 @@
 module DictionarySpec where
 
-import           Application
+import Application
+import Arbitrary
+import Data.Map
+import Helpers
+import Test.Hspec
+import Test.Hspec.QuickCheck
 
-import           Arbitrary
-import           Helpers
-
-import           Data.Map
-import           Test.Hspec
-import           Test.Hspec.QuickCheck
 spec :: Spec
 spec = do
   describe "building a dictionary" $ do

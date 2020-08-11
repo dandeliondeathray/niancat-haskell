@@ -2,22 +2,19 @@
 
 module Features.GetPuzzleSpec where
 
-import           Application
-import           Service
-import           Web
-
-import           Helpers
-
-import           Control.Concurrent.STM
-import           Control.Monad.Reader
-import           Data.Default.Class
-import           Network.Wai                    (Application)
-import           Test.Hspec
-import           Test.Hspec.Wai
-import           Test.Hspec.Wai.JSON
-import           Test.Hspec.Wai.QuickCheck
-import           Test.QuickCheck.Instances.Text
-
+import Application
+import Control.Concurrent.STM
+import Control.Monad.Reader
+import Data.Default.Class
+import Helpers
+import Network.Wai (Application)
+import Service
+import Test.Hspec
+import Test.Hspec.Wai
+import Test.Hspec.Wai.JSON
+import Test.Hspec.Wai.QuickCheck
+import Test.QuickCheck.Instances.Text
+import Web
 
 emptyState = def :: NiancatState
 

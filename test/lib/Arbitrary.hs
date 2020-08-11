@@ -1,16 +1,15 @@
 module Arbitrary where
 
-import           Application
+import Application
+import Control.Applicative
+import Data.Map (toList)
+import Helpers
+import Test.QuickCheck
+import Test.QuickCheck.Arbitrary
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Instances.Text
+import Prelude hiding (Word)
 
-import           Helpers
-
-import           Control.Applicative
-import           Data.Map                       (toList)
-import           Prelude                        hiding (Word)
-import           Test.QuickCheck
-import           Test.QuickCheck.Arbitrary
-import           Test.QuickCheck.Gen
-import           Test.QuickCheck.Instances.Text
 
 newtype Valid = Valid Word deriving (Show)
 newtype Invalid = Invalid Word deriving (Show)
@@ -29,5 +28,5 @@ instance Arbitrary Invalid where
   arbitrary = do
     w <- word <$> arbitrary
     if has testDictionary w
-    then discard
-    else return . Invalid $ w
+      then discard
+      else return . Invalid $ w

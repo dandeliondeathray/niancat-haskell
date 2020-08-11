@@ -1,13 +1,12 @@
-{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Features.SetPuzzle where
 
-import           Application
-import           Web
-
-import           Data.Aeson
-import           TextShow
+import Application
+import Data.Aeson
+import TextShow
+import Web
 
 newtype SetPuzzle = SetPuzzle Puzzle deriving (Show, Eq)
 
@@ -38,4 +37,3 @@ setPuzzle dict (SetPuzzle p') s =
     Nothing -> (s', PuzzleSet p')
   where
     s' = s {currentPuzzle = Just p'}
-

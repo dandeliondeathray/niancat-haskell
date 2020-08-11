@@ -1,6 +1,6 @@
 module Main where
 
-import           Service
+import Service
 
 main :: IO ()
 main = runNiancat
