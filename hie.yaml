@@ -1,0 +1,8 @@
+cradle:
+    stack:
+        - path: "./src/lib"
+          component: "niancat:lib"
+        - path: "./src/app"
+          component: "niancat:exe:niancat-exe"
+        - path: "./test/lib"
+          component: "niancat:test:niancat-test"
