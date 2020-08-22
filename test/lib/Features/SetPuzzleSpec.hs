@@ -39,7 +39,7 @@ spec = do
             currentPuzzle s `shouldBe` Just (puzzle "TRÖJAPIKE")
   describe "with a puzzle set" $ do
     let p = puzzle "TRÖJAPIKÉ"
-    let state = State {currentPuzzle = Just p}
+    let state = def {currentPuzzle = Just p}
     describe "setting an equivalent puzzle" $ do
       let p' = puzzle "JATRÖPIKÉ"
       let (s', r) = setPuzzle testDictionary (SetPuzzle p) state

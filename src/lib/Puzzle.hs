@@ -59,6 +59,8 @@ instance Eq Puzzle where
 
 instance Eq Word where
   Word a == Word b = canonicalize a == canonicalize b
+instance Ord Word where
+  Word a <= Word b = canonicalize a <= canonicalize b
 instance Eq Key where
 
   Key a == Key b = a == b

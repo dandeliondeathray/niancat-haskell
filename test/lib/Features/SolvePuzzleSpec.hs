@@ -4,31 +4,38 @@ module Features.SolvePuzzleSpec where
 
 import Application
 import Data.Default.Class
+import Data.Map
 import Data.Text
 import Features.SolvePuzzle
 import Helpers
 import Matchers
 import Network.Wai.Test
+import Control.Concurrent.STM
 import Test.Hspec
-import Test.Hspec.Wai
+import Test.Hspec.Wai hiding (get)
 import Test.Hspec.Wai.JSON
 import Web
 
-postSolution :: Text -> WaiSession st SResponse
-postSolution s = postJson "v2/solutions" [json|{"user": "foobar", "solution": #{s}}|]
+postSolution :: Text -> Text -> WaiSession st SResponse
+postSolution u s = postJson "v2/solutions" [json|{"user": #{u}, "solution": #{s}}|]
 
 spec :: Spec
 spec = do
-  describe "in an initial state" $
+  let user = "foobar"
+  describe "in an initial state" $ do
     withS def $
       describe "submitting a solution" $ do
-        let act = postSolution "foobar"
+        let act = postSolution user "VANTRIVAS"
         it "respons with NotSet" $ act `shouldRespondWith` allOf [Reply "Nian är inte satt än!"]
         it "respons with status 200" $ act `shouldRespondWith` 200
   describe "with a puzzle set" $
     withS def {currentPuzzle = Just $ puzzle "TRIVASVAN"} $ do
       describe "submitting an incorrect solution" $
         context "with matching letters" $ do
-          it "in canonical form" $ postSolution "SVANTRIVA" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
-          it "in other form" $ postSolution "svantriva" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
-      describe "submitting a correct solution" $ it "responds that the answer is correct" $ postSolution "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
+          it "in canonical form" $ postSolution user "SVANTRIVA" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
+          it "in other form" $ postSolution user "svantriva" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
+      describe "submitting a correct solution" $ do
+        it "responds that the answer is correct" $ postSolution user "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
+        it "adds the user to today's solvers" $ do
+          postSolution user "VANTRIVAS"
+          assertS $ \s -> solvers s `shouldBe` fromList [(word "VANTRIVAS",[ User "foobar"])]

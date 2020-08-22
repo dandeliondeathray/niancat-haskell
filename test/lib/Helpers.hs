@@ -1,6 +1,8 @@
 module Helpers where
 
 import Application
+import Service
+
 import Control.Concurrent.STM
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as LB
@@ -12,12 +14,6 @@ import Service
 import Test.Hspec
 import Test.Hspec.Wai
 
-wrapp :: Dictionary -> NiancatState -> IO (TVar NiancatState, Application)
-wrapp dict state = do
-  s <- newTVarIO state
-  let a = niancat dict s
-  return (s, a)
-
 testDictionary :: Dictionary
 testDictionary =
   Dictionary $
@@ -28,7 +24,14 @@ testDictionary =
       ]
 
 withS :: NiancatState -> SpecWith (TVar NiancatState, Application) -> Spec
-withS s = withState (wrapp testDictionary s)
+withS s = withState (buildNiancat testDictionary s)
+
+assertS :: (NiancatState -> IO ()) -> WaiSession (TVar NiancatState) ()
+assertS assertion = do
+  st <- getState
+  liftIO $ do
+    s <- readTVarIO st
+    assertion s
 
 sendJson :: Method -> B.ByteString -> LB.ByteString -> WaiSession st SResponse
 sendJson method path = request method path [(hContentType, "application/json")]

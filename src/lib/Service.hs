@@ -31,7 +31,7 @@ niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy
 
 niancat :: Dictionary -> TVar NiancatState -> Application
-niancat dict s = errorsAsJson $ serve niancatAPI $ hoistServer niancatAPI (nt s) features
+niancat dict s = server s niancatAPI features
   where
     features =
       hello
@@ -43,7 +43,7 @@ nt :: TVar NiancatState -> AppM a -> Handler a
 nt s x = runReaderT x s
 
 server :: HasServer a '[] => TVar NiancatState -> Proxy a -> ServerT a AppM -> Application
-server s p srv = serve p $ hoistServer p (nt s) srv
+server s p srv = errorsAsJson $ serve p $ hoistServer p (nt s) srv
 
 getDictionary :: IO Dictionary
 getDictionary =
@@ -51,9 +51,15 @@ getDictionary =
     >>= readFile . fromMaybe "saol.txt"
     <&> build . lines
 
+buildNiancat :: Dictionary -> NiancatState -> IO (TVar NiancatState, Application)
+buildNiancat dictionary state = do
+  s <- newTVarIO state
+  let a = niancat dictionary s
+  return (s, a)
+
 runNiancat :: IO ()
 runNiancat = do
-  putStrLn "Serving niancat on port 3000"
   dictionary <- getDictionary
-  st <- newTVarIO def
-  run 3000 . logStdoutDev $ niancat dictionary st
+  (_, a) <- buildNiancat dictionary def
+  putStrLn "Serving niancat on port 3000"
+  run 3000 . logStdoutDev $ a
