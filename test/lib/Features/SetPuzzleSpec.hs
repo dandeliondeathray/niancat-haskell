@@ -24,9 +24,11 @@ spec = do
       let s = emptyState
       let p = puzzle "TRÖJAPIKÉ"
       let cmd = SetPuzzle p
-      let (s', r) = setPuzzle testDictionary cmd s
+      let es = setPuzzle testDictionary cmd s
+      let s' = evolve s es
+      let rs = es >>= messages
       it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
-      it "responds with PuzzleSet" $ r `shouldBe` PuzzleSet p
+      it "responds with PuzzleSet" $ es `shouldBe` [PuzzleSet p]
     withS emptyState $
       describe "PUT v2/puzzle" $ do
         it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "foobar"}|] `shouldRespondWith` allOf [Reply "OK!"]
@@ -42,9 +44,11 @@ spec = do
     let state = def {currentPuzzle = Just p}
     describe "setting an equivalent puzzle" $ do
       let p' = puzzle "JATRÖPIKÉ"
-      let (s', r) = setPuzzle testDictionary (SetPuzzle p) state
+      let es = setPuzzle testDictionary (SetPuzzle p) state
+      let s' = evolve state es
+      let rs = es >>= messages
       it "does not change the puzzle" $ currentPuzzle s' `shouldBe` Just p
-      it "replies with SamePuzzle" $ r `shouldBe` SamePuzzle p
+      it "replies with SamePuzzle" $ es `shouldBe` [SamePuzzle p]
       withS state $
         describe "PUT /v2/puzzle" $ do
           describe "for an equivalent puzzle" $ do

@@ -10,7 +10,7 @@ import Web
 
 newtype SetPuzzle = SetPuzzle Puzzle deriving (Show, Eq)
 
-data SetPuzzleResponse
+data SetPuzzleEvent
   = PuzzleSet Puzzle
   | InvalidPuzzle Puzzle
   | SamePuzzle Puzzle
@@ -19,7 +19,11 @@ data SetPuzzleResponse
 instance FromJSON SetPuzzle where
   parseJSON = withObject "puzzle" $ \o -> SetPuzzle . puzzle <$> o .: "puzzle"
 
-instance Response SetPuzzleResponse where
+instance Event SetPuzzleEvent where
+  apply s (PuzzleSet p) = s {currentPuzzle = Just p}
+  apply s _ = s
+
+instance Response SetPuzzleEvent where
   messages (PuzzleSet p) =
     [Reply "OK!", Notification $ mconcat ["Dagens nia är **", showt p, "**"]]
   messages (SamePuzzle p) =
@@ -27,13 +31,11 @@ instance Response SetPuzzleResponse where
   messages (InvalidPuzzle p) =
     [Reply $ mconcat ["Pusslet " <> showt p <> " är inte giltigt!"]]
 
-setPuzzle :: Dictionary -> SetPuzzle -> NiancatState -> (NiancatState, SetPuzzleResponse)
+setPuzzle :: Dictionary -> SetPuzzle -> NiancatState -> [SetPuzzleEvent]
 setPuzzle dict (SetPuzzle p') s =
   case currentPuzzle s of
     Just p
-      | p == p' -> (s, SamePuzzle p)
-      | not . valid dict $ p -> (s, InvalidPuzzle p)
-      | otherwise -> (s', PuzzleSet p')
-    Nothing -> (s', PuzzleSet p')
-  where
-    s' = s {currentPuzzle = Just p'}
+      | p == p' -> [SamePuzzle p]
+      | not . valid dict $ p -> [InvalidPuzzle p]
+      | otherwise -> [PuzzleSet p']
+    Nothing -> [PuzzleSet p']

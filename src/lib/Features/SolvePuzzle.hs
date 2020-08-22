@@ -22,15 +22,20 @@ instance FromJSON SubmitSolution where
       solution <- v .: "solution"
       return $ SubmitSolution (User user) (word solution)
 
-data SolutionResponse
-  = Correct Word
+data SolutionPosted
+  = Correct Word User Bool
   | Incorrect Word
   | NotSet
 
-instance Response SolutionResponse where
+instance Response SolutionPosted where
   messages NotSet = [Reply "Nian är inte satt än!"]
   messages (Incorrect guess) = [Reply $ "Ordet " <> showt guess <> " finns inte med i SAOL."]
-  messages (Correct guess) = [Reply $ "Ordet " <> showt guess <> " är korrekt!"]
+  messages (Correct guess _ _) = [Reply $ "Ordet " <> showt guess <> " är korrekt!"]
+
+instance Event SolutionPosted where
+  apply s (Incorrect _) = s
+  apply s NotSet = s
+  apply s (Correct w u True) = registerSolver u w s
 
 registerSolver :: User -> Word -> NiancatState -> NiancatState
 registerSolver u w s = s'
@@ -43,10 +48,8 @@ registerSolver u w s = s'
 hasSolved :: User -> Word -> NiancatState -> Bool
 hasSolved u w = elem u . fromMaybe [] . lookup w . solvers 
 
-solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> (NiancatState, SolutionResponse)
-solvePuzzle dict (SubmitSolution u w) s = (s', r)
-  where
-    s' = registerSolver u w s
-    r = case currentPuzzle s of
-      Just p -> if solves dict w p then Correct w else Incorrect w
-      Nothing -> NotSet
+solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> [SolutionPosted]
+solvePuzzle dict (SubmitSolution u w) s =
+  case currentPuzzle s of
+      Just p -> if solves dict w p then [Correct w u True] else [Incorrect w]
+      Nothing -> [NotSet]
