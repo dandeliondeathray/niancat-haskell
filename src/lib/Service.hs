@@ -4,21 +4,26 @@
 
 module Service where
 
-import Application
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
 import Data.Functor
 import Data.Maybe
 import Errors
-import Features.GetPuzzle
-import Features.Hello
-import Features.SetPuzzle
-import Features.SolvePuzzle
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger
 import Servant
 import System.Environment
+
+import Features.GetPuzzle
+import Features.Hello
+import Features.SetPuzzle
+import Features.SolvePuzzle
+
+import Niancat.Dictionary
+import Niancat.Domain
+import Niancat.Replies
+
 import Web
 
 type NiancatAPI =

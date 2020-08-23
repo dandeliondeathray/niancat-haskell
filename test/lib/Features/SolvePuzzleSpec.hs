@@ -2,19 +2,23 @@
 
 module Features.SolvePuzzleSpec where
 
-import Application
 import Data.Default.Class
 import Data.Map
 import Data.Text
 import Features.SolvePuzzle
-import Helpers
-import Matchers
 import Network.Wai.Test
 import Control.Concurrent.STM
 import Test.Hspec
 import Test.Hspec.Wai hiding (get)
 import Test.Hspec.Wai.JSON
+
+import Niancat.Domain
+import Niancat.Puzzle
+import Niancat.Replies
 import Web
+
+import Helpers
+import Matchers
 
 postSolution :: Text -> Text -> WaiSession st SResponse
 postSolution u s = postJson "v2/solutions" [json|{"user": #{u}, "solution": #{s}}|]

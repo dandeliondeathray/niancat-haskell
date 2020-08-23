@@ -3,9 +3,11 @@
 
 module Features.GetPuzzle where
 
-import Application
 import TextShow
-import Web
+
+import Niancat.Domain
+import Niancat.Replies
+import Niancat.Puzzle
 
 data GetPuzzle
   = GetPuzzle

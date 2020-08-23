@@ -1,6 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
-module Puzzle
+module Niancat.Puzzle
   ( Puzzle,
     puzzle,
     Word,

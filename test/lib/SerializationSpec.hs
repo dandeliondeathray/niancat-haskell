@@ -2,14 +2,19 @@
 
 module SerializationSpec where
 
-import Application
 import Data.Aeson
 import Data.Text.Lazy
 import Data.Typeable
-import Features.SetPuzzle
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.Text
+
+import Features.SetPuzzle
+
+import Niancat.Domain
+import Niancat.Puzzle
+import Niancat.Replies
+
 import Web
 
 spec :: Spec

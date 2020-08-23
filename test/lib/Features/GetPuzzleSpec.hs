@@ -2,19 +2,23 @@
 
 module Features.GetPuzzleSpec where
 
-import Application
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
-import Helpers
 import Network.Wai (Application)
-import Service
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
 import Test.Hspec.Wai.QuickCheck
 import Test.QuickCheck.Instances.Text
+
+import Niancat.Domain
+import Niancat.Puzzle
+
+import Service
 import Web
+
+import Helpers
 
 emptyState = def :: NiancatState
 

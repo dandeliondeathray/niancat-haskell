@@ -10,6 +10,9 @@ import Data.Aeson
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as LB
 import Test.Hspec.Wai
+
+import Niancat.Replies
+
 import Web
 
 instance FromJSON Message where

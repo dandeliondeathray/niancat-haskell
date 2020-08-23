@@ -2,19 +2,23 @@
 
 module Features.SetPuzzleSpec where
 
-import Application
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
-import Data.Text.Lazy
-import Features.SetPuzzle
-import Helpers
-import Matchers
-import Service
+import Data.Text.Lazy hiding (foldl)
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
+
+import Features.SetPuzzle
+import Niancat.Domain
+import Niancat.Replies
+import Niancat.Puzzle
+import Service
 import Web hiding (getState)
+
+import Helpers
+import Matchers
 
 emptyState = def :: NiancatState
 
@@ -25,7 +29,7 @@ spec = do
       let p = puzzle "TRÖJAPIKÉ"
       let cmd = SetPuzzle p
       let es = setPuzzle testDictionary cmd s
-      let s' = evolve s es
+      let s' = foldl apply s es
       let rs = es >>= messages
       it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "responds with PuzzleSet" $ es `shouldBe` [PuzzleSet p]
@@ -45,10 +49,10 @@ spec = do
     describe "setting an equivalent puzzle" $ do
       let p' = puzzle "JATRÖPIKÉ"
       let es = setPuzzle testDictionary (SetPuzzle p) state
-      let s' = evolve state es
+      let s' = foldl apply state es
       let rs = es >>= messages
       it "does not change the puzzle" $ currentPuzzle s' `shouldBe` Just p
-      it "replies with SamePuzzle" $ es `shouldBe` [SamePuzzle p]
+      it "replies with SamePuzzle" $ es `shouldBe` [SamePuzzleSet p]
       withS state $
         describe "PUT /v2/puzzle" $ do
           describe "for an equivalent puzzle" $ do

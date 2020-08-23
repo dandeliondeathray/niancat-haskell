@@ -1,8 +1,5 @@
 module Helpers where
 
-import Application
-import Service
-
 import Control.Concurrent.STM
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as LB
@@ -10,9 +7,15 @@ import qualified Data.Map as Map
 import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.Test (SResponse)
-import Service
 import Test.Hspec
 import Test.Hspec.Wai
+
+import Niancat.Dictionary
+import Niancat.Domain
+import Niancat.Replies
+import Niancat.Puzzle
+
+import Service
 
 testDictionary :: Dictionary
 testDictionary =

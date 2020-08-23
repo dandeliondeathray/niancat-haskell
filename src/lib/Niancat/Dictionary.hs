@@ -1,4 +1,4 @@
-module Dictionary where
+module Niancat.Dictionary where
 
 import Data.Foldable (toList)
 import Data.List (nub)
@@ -7,8 +7,9 @@ import Data.Maybe
 import Data.NonEmpty.Mixed (groupKey)
 import Data.Text.Lazy (pack)
 import GHC.Exts hiding (Word, toList)
-import Puzzle
 import Prelude hiding (Word, map)
+
+import Niancat.Puzzle
 
 newtype Dictionary = Dictionary (Map Key [Word])
 
