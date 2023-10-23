@@ -1,5 +1,0 @@
-[*.sh]
-end_of_line = lf
-
-[*rc]
-end_of_line = lf
