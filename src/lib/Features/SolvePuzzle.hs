@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeOperators #-}
 
 module Features.SolvePuzzle where
 
@@ -25,9 +24,9 @@ instance FromJSON SubmitSolution where
 solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> [NiancatEvent]
 solvePuzzle dict (SubmitSolution u w) s =
   case currentPuzzle s of
-      Just p -> if solves dict w p 
-                then [CorrectSolutionSubmitted w u True]
+      Just p -> if solves dict w p
+                then [CorrectSolutionSubmitted w u first]
                 else [IncorrectSolutionSubmitted w]
                   where
-                    first = not $ hasSolved u w s
+                    first = if hasSolved u w s then No else Yes
       Nothing -> [SolutionSubmittedWithNoPuzzleSet]

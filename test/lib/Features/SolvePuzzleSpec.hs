@@ -5,9 +5,7 @@ module Features.SolvePuzzleSpec where
 import Data.Default.Class
 import Data.Map
 import Data.Text
-import Features.SolvePuzzle
 import Network.Wai.Test
-import Control.Concurrent.STM
 import Test.Hspec
 import Test.Hspec.Wai hiding (get)
 import Test.Hspec.Wai.JSON
@@ -15,7 +13,6 @@ import Test.Hspec.Wai.JSON
 import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
-import Web
 
 import Helpers
 import Matchers
@@ -41,5 +38,5 @@ spec = do
       describe "submitting a correct solution" $ do
         it "responds that the answer is correct" $ postSolution user "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
         it "adds the user to today's solvers" $ do
-          postSolution user "VANTRIVAS"
+          _ <- postSolution user "VANTRIVAS"
           assertS $ \s -> solvers s `shouldBe` fromList [(word "VANTRIVAS",[ User "foobar"])]

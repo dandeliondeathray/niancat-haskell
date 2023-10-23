@@ -6,7 +6,7 @@ import Data.Default.Class
 import Data.Map (Map)
 import Data.Maybe
 import qualified Data.Map as Map
-import Data.Text
+import Data.Text hiding (elem)
 
 import Niancat.Puzzle
 
@@ -24,19 +24,22 @@ data NiancatState = State
 instance Default NiancatState where
   def = State {currentPuzzle = Nothing, solvers = Map.empty}
 
+data FirstTime = Yes | No
+  deriving (Show, Eq)
+
 data NiancatEvent
   = PuzzleSet Puzzle
   | InvalidPuzzleSet Puzzle
   | SamePuzzleSet Puzzle
-  | CorrectSolutionSubmitted Word User Bool
+  | CorrectSolutionSubmitted Word User FirstTime
   | IncorrectSolutionSubmitted Word
   | SolutionSubmittedWithNoPuzzleSet
   deriving (Show, Eq)
 
 apply :: NiancatState -> NiancatEvent -> NiancatState
 apply s (PuzzleSet p) = s { currentPuzzle = Just p }
-apply s (CorrectSolutionSubmitted _ _ False) = s
-apply s (CorrectSolutionSubmitted w u True) = registerSolver u w s
+apply s (CorrectSolutionSubmitted _ _ No) = s
+apply s (CorrectSolutionSubmitted w u Yes) = registerSolver u w s
 apply s _ = s
 
 registerSolver :: User -> Word -> NiancatState -> NiancatState

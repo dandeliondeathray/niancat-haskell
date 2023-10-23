@@ -3,7 +3,6 @@ module Errors where
 import Data.Aeson
 import Data.ByteString.Builder
 import qualified Data.ByteString.Lazy as LB
-import Data.HashMap.Strict
 import Data.IORef
 import Data.List
 import Data.String.Conversions (cs)
@@ -30,8 +29,7 @@ createErrorResponse status body = responseLBS status headers body'
     Status code msg = status
     headers = [(hContentType, "application/json")]
     body' =
-      encode . Object $
-        fromList
+      encode . object $
           [ ("status", toJSON code),
             ("message", String $ if body == mempty then cs msg else cs body)
           ]

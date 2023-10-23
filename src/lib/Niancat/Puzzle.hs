@@ -16,7 +16,7 @@ import Data.List (sort)
 import Data.Text.Lazy hiding (filter)
 import GHC.Exts hiding (Word)
 import TextShow
-import Prelude hiding (Word, unwords)
+import Prelude hiding (Word, unwords, elem)
 
 newtype Puzzle = Puzzle Text
 puzzle :: Text -> Puzzle
@@ -46,8 +46,8 @@ canonicalize = toUpper . clean . removeDiacritics . toCaseFold
       Data.Text.Lazy.map
         ( \case
             c'
-              | c' `elem` ['á', 'à'] -> 'a'
-              | c' `elem` ['é', 'è'] -> 'e'
+              | c' `elem` "áà" -> 'a'
+              | c' `elem` "éè" -> 'e'
               | otherwise -> c'
         )
     disallowedChars = "[- _]" :: String

@@ -4,18 +4,15 @@ module SerializationSpec where
 
 import Data.Aeson
 import Data.Text.Lazy
-import Data.Typeable
 import Test.Hspec
 import Test.Hspec.QuickCheck
-import Test.QuickCheck.Instances.Text
+import Test.QuickCheck.Instances.Text ()
 
 import Features.SetPuzzle
 
-import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
 
-import Web
 
 spec :: Spec
 spec = do

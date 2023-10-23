@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Features.SetPuzzleSpec where
@@ -5,7 +6,6 @@ module Features.SetPuzzleSpec where
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
-import Data.Text.Lazy hiding (foldl)
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
@@ -14,8 +14,6 @@ import Features.SetPuzzle
 import Niancat.Domain
 import Niancat.Replies
 import Niancat.Puzzle
-import Service
-import Web hiding (getState)
 
 import Helpers
 import Matchers
@@ -30,7 +28,6 @@ spec = do
       let cmd = SetPuzzle p
       let es = setPuzzle testDictionary cmd s
       let s' = foldl apply s es
-      let rs = es >>= messages
       it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "responds with PuzzleSet" $ es `shouldBe` [PuzzleSet p]
     withS emptyState $
@@ -48,9 +45,8 @@ spec = do
     let state = def {currentPuzzle = Just p}
     describe "setting an equivalent puzzle" $ do
       let p' = puzzle "JATRÖPIKÉ"
-      let es = setPuzzle testDictionary (SetPuzzle p) state
+      let es = setPuzzle testDictionary (SetPuzzle p') state
       let s' = foldl apply state es
-      let rs = es >>= messages
       it "does not change the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "replies with SamePuzzle" $ es `shouldBe` [SamePuzzleSet p]
       withS state $

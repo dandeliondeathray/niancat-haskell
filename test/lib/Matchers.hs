@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Matchers
   ( allOf,
     atLeastOneOf,
@@ -7,13 +9,9 @@ where
 
 import Control.Monad
 import Data.Aeson
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Lazy as LB
 import Test.Hspec.Wai
 
 import Niancat.Replies
-
-import Web
 
 instance FromJSON Message where
   parseJSON =

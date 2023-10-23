@@ -1,22 +1,17 @@
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Features.GetPuzzleSpec where
 
-import Control.Concurrent.STM
-import Control.Monad.Reader
 import Data.Default.Class
-import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
-import Test.Hspec.Wai.QuickCheck
-import Test.QuickCheck.Instances.Text
+import Test.Hspec.Wai.QuickCheck ()
+import Test.QuickCheck.Instances.Text ()
 
 import Niancat.Domain
 import Niancat.Puzzle
-
-import Service
-import Web
 
 import Helpers
 

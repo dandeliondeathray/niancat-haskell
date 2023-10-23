@@ -12,7 +12,6 @@ import Test.Hspec.Wai
 
 import Niancat.Dictionary
 import Niancat.Domain
-import Niancat.Replies
 import Niancat.Puzzle
 
 import Service

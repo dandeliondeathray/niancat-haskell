@@ -1,7 +1,7 @@
-snapshot: lts-16.6
+snapshot: lts-21.17
 packages:
 - .
 
-extra-deps:
-- hspec-wai-json-0.10.1
-- ghc-prim-0.5.3
+extra-deps: []
+# - hspec-wai-json-0.10.1
+# - ghc-prim-0.5.3

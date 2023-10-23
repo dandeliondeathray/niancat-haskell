@@ -1,11 +1,13 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Arbitrary where
 
 import Control.Applicative
 import Data.Map (toList)
 import Test.QuickCheck
-import Test.QuickCheck.Arbitrary
-import Test.QuickCheck.Gen
-import Test.QuickCheck.Instances.Text
+import Test.QuickCheck.Arbitrary ()
+import Test.QuickCheck.Gen ()
+import Test.QuickCheck.Instances.Text ()
 import Prelude hiding (Word)
 
 import Niancat.Dictionary

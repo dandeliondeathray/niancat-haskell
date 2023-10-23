@@ -5,7 +5,7 @@ import Data.Text.Lazy
 import GHC.Exts
 import Test.Hspec
 import Test.Hspec.QuickCheck
-import Test.QuickCheck.Instances.Text
+import Test.QuickCheck.Instances.Text ()
 
 import Niancat.Puzzle
 
