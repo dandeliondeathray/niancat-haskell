@@ -25,8 +25,6 @@ solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> [NiancatEvent]
 solvePuzzle dict (SubmitSolution u w) s =
   case currentPuzzle s of
       Just p -> if solves dict w p
-                then [CorrectSolutionSubmitted w u first]
+                then [CorrectSolutionSubmitted w u $ firstTime u w s]
                 else [IncorrectSolutionSubmitted w]
-                  where
-                    first = if hasSolved u w s then No else Yes
       Nothing -> [SolutionSubmittedWithNoPuzzleSet]

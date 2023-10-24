@@ -36,7 +36,8 @@ spec = do
           it "in canonical form" $ postSolution user "SVANTRIVA" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
           it "in other form" $ postSolution user "svantriva" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
       describe "submitting a correct solution" $ do
-        it "responds that the answer is correct" $ postSolution user "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
+        it "responds that the answer is correct" $
+          postSolution user "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
         it "adds the user to today's solvers" $ do
           _ <- postSolution user "VANTRIVAS"
           assertS $ \s -> solvers s `shouldBe` fromList [(word "VANTRIVAS",[ User "foobar"])]
