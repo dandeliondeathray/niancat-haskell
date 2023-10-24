@@ -21,7 +21,9 @@ RUN sh -c 'cp "$(stack path --local-install-root)"/bin/niancat-exe /build/nianca
 FROM alpine
 
 RUN apk add --update \
-  ca-certificates
+  ca-certificates \
+  gcompat \
+  gmp
 
 COPY --from=builder /build/niancat /niancat
 
