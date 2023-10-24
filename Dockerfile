@@ -1,7 +1,7 @@
-ARG STACK_RESOLVER=lts-14.11
-ARG HASKELL_VERSION=8.6.5
+ARG STACK_RESOLVER=lts-21.17
+ARG HASKELL_VERSION=9.4.7
 
-FROM haskell:${HASKELL_VERSION} AS builder
+FROM docker.io/haskell:${HASKELL_VERSION} AS builder
 
 WORKDIR /src
 
@@ -9,19 +9,20 @@ COPY stack.yaml .
 COPY package.yaml .
 COPY README.md .
 
-RUN mkdir -p src/lib && \
-    mkdir -p src/app && \
-    mkdir -p test/lib && \
-    stack build --system-ghc
+RUN stack build --dependencies-only --test
 
 COPY . .
 
-RUN stack build --system-ghc
+RUN stack build --system-ghc --test
 
-FROM alpine:latest
+RUN mkdir /build
+RUN sh -c 'cp "$(stack path --local-install-root)"/bin/niancat-exe /build/niancat'
 
-RUN apk add --update ca-certificates
+FROM alpine
 
-COPY --from=builder /src/.stack-work/install/x86_64-linux/${STACK_RESOLVER}/${HASKELL_VERSION}/bin .
+RUN apk add --update \
+  ca-certificates
 
-RUN ls
+COPY --from=builder /build/niancat /niancat
+
+ENTRYPOINT ["/niancat"]
