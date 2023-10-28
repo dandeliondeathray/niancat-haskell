@@ -37,6 +37,8 @@ library:
     - http-types
     - mtl
     - path
+    - selda
+    - selda-sqlite
     - stm
     - string-conversions
     - system-filepath

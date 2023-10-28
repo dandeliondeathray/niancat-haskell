@@ -3,7 +3,7 @@
 module Niancat.Puzzle (
   Puzzle,
   puzzle,
-  Word(..),
+  Word (..),
   Key,
   key,
   wkey,

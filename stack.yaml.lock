@@ -3,7 +3,33 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    commit: ab9619db13b93867d1a244441bb4de03d3e1dadb
+    git: https://github.com/guibou/selda
+    name: selda
+    pantry-tree:
+      sha256: f0f34064da2e79ecc37413002a8b020b425b1e5116308f315c9dc8d789aa14a5
+      size: 2365
+    subdir: selda
+    version: 0.5.2.1
+  original:
+    commit: ab9619db13b93867d1a244441bb4de03d3e1dadb
+    git: https://github.com/guibou/selda
+    subdir: selda
+- completed:
+    commit: ab9619db13b93867d1a244441bb4de03d3e1dadb
+    git: https://github.com/guibou/selda
+    name: selda-sqlite
+    pantry-tree:
+      sha256: 2e546e059aa264aa04ccdda75c6f394f7b52f75e2ea2739ba222f72b683395db
+      size: 305
+    subdir: selda-sqlite
+    version: 0.1.7.2
+  original:
+    commit: ab9619db13b93867d1a244441bb4de03d3e1dadb
+    git: https://github.com/guibou/selda
+    subdir: selda-sqlite
 snapshots:
 - completed:
     sha256: 85d2382958c178491d3fe50d770a624621f5ab456beef7d31ac7521f780c9bc7
