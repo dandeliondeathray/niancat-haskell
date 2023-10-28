@@ -23,11 +23,11 @@ import Debug.Events
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
+import Persistence.Events
 import Web
-import Persistence.Events (EventWithMeta)
 
 type NiancatAPI =
-    "v2" :> "puzzle" :> Get '[JSON] [Message]
+  "v2" :> "puzzle" :> Get '[JSON] [Message]
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [EventWithMeta]
@@ -35,19 +35,19 @@ type NiancatAPI =
 niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy
 
-niancat :: Dictionary -> Ctx -> Application
+niancat :: (Store s) => Dictionary -> Ctx s -> Application
 niancat dict s = server s niancatAPI features
  where
   features =
-      query getPuzzle
+    query getPuzzle
       :<|> command . setPuzzle dict
       :<|> command . solvePuzzle dict
       :<|> debug events
 
-nt :: Ctx -> AppM a -> Handler a
+nt :: (Store s) => Ctx s -> AppM s a -> Handler a
 nt s x = runReaderT x s
 
-server :: (HasServer a '[]) => Ctx -> Proxy a -> ServerT a AppM -> Application
+server :: (HasServer a '[], Store s) => (Ctx s) -> Proxy a -> ServerT a (AppM s) -> Application
 server s p srv = errorsAsJson $ serve p $ hoistServer p (nt s) srv
 
 getDictionary :: IO Dictionary
@@ -58,14 +58,10 @@ getDictionary =
     <&> build
     . lines
 
-buildNiancat :: Dictionary -> NiancatState -> IO (Ctx, Application)
-buildNiancat dictionary initialState = do
-  ctx <- initialize initialState
-  return (ctx, niancat dictionary ctx)
-
 runNiancat :: IO ()
 runNiancat = do
   dictionary <- getDictionary
-  (_, a) <- buildNiancat dictionary def
+  ctx <- initialize def
+  let a = niancat dictionary ctx
   putStrLn "Serving niancat on port 3000"
   run 3000 . logStdoutDev $ a

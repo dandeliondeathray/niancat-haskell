@@ -16,3 +16,8 @@ instance Store InMemoryStore where
   getSince t = fmap (sortBy (comparing timestamp) . filter ((> t) . timestamp)) . readTVarIO . events
 
   append es s = atomically $ readTVar (events s) >>= writeTVar (events s) . (es ++)
+
+newInMemoryStore :: IO InMemoryStore
+newInMemoryStore = do
+  es <- newTVarIO []
+  return InMemory{events = es}

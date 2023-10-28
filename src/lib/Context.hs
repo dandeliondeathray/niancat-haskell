@@ -3,15 +3,16 @@ module Context where
 import Control.Concurrent.STM
 import Niancat.Domain
 import Persistence.InMemory
+import Persistence.Events
 
-data Ctx = Ctx
+data (Store s) => Ctx s = Ctx
   { state :: TVar NiancatState
-  , store :: InMemoryStore
+  , store :: s
   }
 
-initialize :: NiancatState -> IO Ctx
+initialize :: NiancatState -> IO (Ctx InMemoryStore)
 initialize initialState = do
   state' <- newTVarIO initialState
-  events' <- newTVarIO []
+  store' <- newInMemoryStore
 
-  return Ctx { state = state', store = InMemory { events = events' } }
+  return Ctx{state = state', store = store'}

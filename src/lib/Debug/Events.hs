@@ -3,5 +3,5 @@ module Debug.Events where
 import Context
 import Persistence.Events
 
-events :: Ctx -> IO [EventWithMeta]
+events :: (Store s) => Ctx s -> IO [EventWithMeta]
 events = getAll . store
