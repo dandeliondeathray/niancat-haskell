@@ -17,7 +17,6 @@ timestamp :: StoredEvent -> UTCTime
 timestamp (_, _, t) = t
 
 class Store s where
-  empty :: IO s
   getAll :: s -> IO [(NiancatEvent, User, UTCTime)]
   getSince :: UTCTime -> s -> IO [(NiancatEvent, User, UTCTime)]
   append :: s -> UTCTime -> User -> [NiancatEvent] -> IO ()

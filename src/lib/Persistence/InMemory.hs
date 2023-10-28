@@ -13,10 +13,6 @@ newtype InMemoryStore = InMemory
   }
 
 instance Store InMemoryStore where
-  empty = do
-    es <- newTVarIO []
-    return InMemory{events = es}
-
   getAll = fmap (sortBy (comparing timestamp)) . readTVarIO . events
 
   getSince t = fmap (sortBy (comparing timestamp) . filter ((> t) . timestamp)) . readTVarIO . events

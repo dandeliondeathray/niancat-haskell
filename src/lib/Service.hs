@@ -4,7 +4,6 @@
 
 module Service where
 
-import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
 import Data.Functor
@@ -64,11 +63,8 @@ getDictionary =
 
 buildNiancat :: Dictionary -> NiancatState -> IO (Ctx, Application)
 buildNiancat dictionary initialState = do
-  s <- newTVarIO initialState
-  emptyStore <- empty
-  let c = Ctx{state = s, store = emptyStore}
-  let a = niancat dictionary c
-  return (c, a)
+  ctx <- initialize initialState
+  return (ctx, niancat dictionary ctx)
 
 runNiancat :: IO ()
 runNiancat = do
