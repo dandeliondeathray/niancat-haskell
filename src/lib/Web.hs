@@ -10,7 +10,6 @@ import Niancat.Replies
 import Persistence.Events
 import Context
 import Data.Time
-import Persistence.InMemory
 
 type AppM = ReaderT Ctx Handler
 
@@ -35,9 +34,6 @@ command resolver = do
       return (u, es)
     append (fmap (imbue u now) es) st
     return $ es >>= messages
-      where
-        imbue :: User -> UTCTime -> NiancatEvent -> InMemoryEvent
-        imbue u t e = pack (u, t, e)
 
 debug :: ToJSON a => (Ctx -> IO a) -> AppM a
 debug resolver = ask >>= liftIO . resolver
