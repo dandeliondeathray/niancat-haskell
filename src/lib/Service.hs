@@ -23,14 +23,14 @@ import Debug.Events
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
-import Persistence.Events
 import Web
+import Persistence.InMemory hiding (events)
 
 type NiancatAPI =
     "v2" :> "puzzle" :> Get '[JSON] [Message]
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
-    :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [StoredEvent]
+    :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [InMemoryEvent]
 
 niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy

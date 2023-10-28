@@ -1,4 +1,3 @@
-{-# LANGUAGE TupleSections #-}
 module Web where
 
 import Data.Aeson
@@ -10,7 +9,8 @@ import Niancat.Domain
 import Niancat.Replies
 import Persistence.Events
 import Context
-import Data.Time (getCurrentTime)
+import Data.Time
+import Persistence.InMemory
 
 type AppM = ReaderT Ctx Handler
 
@@ -27,14 +27,17 @@ command resolver = do
   st <- asks store
   liftIO $ do
     now <- getCurrentTime
-    (u', es) <- atomically $ do
+    (u, es) <- atomically $ do
       s <- readTVar ts
       let WithUser (u, es) = resolver s
       let s' = foldl apply s (fmap (withUser u) es)
       when (s' /= s) (writeTVar ts s')
       return (u, es)
-    append now u' es st
+    append (fmap (imbue u now) es) st
     return $ es >>= messages
+      where
+        imbue :: User -> UTCTime -> NiancatEvent -> InMemoryEvent
+        imbue u t e = pack (u, t, e)
 
 debug :: ToJSON a => (Ctx -> IO a) -> AppM a
 debug resolver = ask >>= liftIO . resolver
