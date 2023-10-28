@@ -19,5 +19,5 @@ instance Store InMemoryStore where
 
   append t u es s = atomically $ do
     es' <- readTVar $ events s
-    let es'' = es' ++ ((,u,t) <$> es)
+    let es'' = es' ++ (StoredEvent . (,u,t) <$> es)
     writeTVar (events s) es''

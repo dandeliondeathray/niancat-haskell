@@ -30,7 +30,7 @@ type NiancatAPI =
     "v2" :> "puzzle" :> Get '[JSON] [Message]
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
-    :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [Serializable]
+    :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [StoredEvent]
 
 niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy

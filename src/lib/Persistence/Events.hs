@@ -8,13 +8,13 @@ import Data.Time
 import Niancat.Domain
 import Niancat.Puzzle
 
-type StoredEvent = (NiancatEvent, User, UTCTime)
+newtype StoredEvent = StoredEvent (NiancatEvent, User, UTCTime)
 event :: StoredEvent -> NiancatEvent
-event (e, _, _) = e
+event (StoredEvent(e, _, _)) = e
 user :: StoredEvent -> User
-user (_, u, _) = u
+user (StoredEvent(_, u, _)) = u
 timestamp :: StoredEvent -> UTCTime
-timestamp (_, _, t) = t
+timestamp (StoredEvent(_, _, t)) = t
 
 class Store s where
   getAll :: s -> IO [StoredEvent]
@@ -22,8 +22,6 @@ class Store s where
   append :: UTCTime -> User -> [NiancatEvent] -> s -> IO ()
 
 type EventStream = TVar [StoredEvent]
-
-newtype Serializable = Serializable StoredEvent
 
 eventType :: NiancatEvent -> Text
 eventType (PuzzleSet _) = "puzzle-set"
@@ -41,8 +39,8 @@ eventData (CorrectSolutionSubmitted (Word w) f) = object ["word" .= w, "first-ti
 eventData (IncorrectSolutionSubmitted w) = object ["word" .= show w]
 eventData SolutionSubmittedWithNoPuzzleSet = object []
 
-instance ToJSON Serializable where
-  toJSON (Serializable (e, User u, t)) =
+instance ToJSON StoredEvent where
+  toJSON (StoredEvent (e, User u, t)) =
     object
       [ "type" .= intercalate "/" [eventType e, "v1"]
       , "timestamp" .= toJSON t
