@@ -15,7 +15,6 @@ import Servant
 import System.Environment
 
 import Features.GetPuzzle
-import Features.Hello
 import Features.SetPuzzle
 import Features.SolvePuzzle
 
@@ -28,8 +27,7 @@ import Persistence.Events
 import Web
 
 type NiancatAPI =
-  HelloAPI
-    :<|> "v2" :> "puzzle" :> Get '[JSON] [Message]
+    "v2" :> "puzzle" :> Get '[JSON] [Message]
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [Serializable]
@@ -41,8 +39,7 @@ niancat :: Dictionary -> Ctx -> Application
 niancat dict s = server s niancatAPI features
  where
   features =
-    hello
-      :<|> query getPuzzle
+      query getPuzzle
       :<|> command . setPuzzle dict
       :<|> command . solvePuzzle dict
       :<|> debug events
