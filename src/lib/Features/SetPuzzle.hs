@@ -18,10 +18,9 @@ instance FromJSON (WithUser SetPuzzle) where
     return $ withUser u $ SetPuzzle p
 
 setPuzzle :: Dictionary -> WithUser SetPuzzle -> NiancatState -> WithUser [NiancatEvent]
-setPuzzle dict (WithUser (u, SetPuzzle p')) s =
-  withUser u $ case currentPuzzle s of
-    Just p
-      | p == p' -> [SamePuzzleSet p]
-      | not . valid dict $ p -> [InvalidPuzzleSet p]
-      | otherwise -> [PuzzleSet p']
-    Nothing -> [PuzzleSet p']
+setPuzzle dict (WithUser (u, SetPuzzle p)) s = withUser u $ set (currentPuzzle s) (valid dict p)
+  where
+    set _         False            = [InvalidPuzzleSet p]
+    set (Just p') True | p' == p   = [SamePuzzleSet p']
+    set Nothing   True             = [PuzzleSet p]
+    set (Just _ ) True | otherwise = [PuzzleSet p]

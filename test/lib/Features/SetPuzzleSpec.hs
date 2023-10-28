@@ -33,7 +33,7 @@ spec = do
     withS emptyState
       $ describe "PUT v2/puzzle"
       $ do
-        it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "foobar", user: "foo"}|] `shouldRespondWith` allOf [Reply "OK!"]
+        it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "JATRÖPIKÉ", user: "foo"}|] `shouldRespondWith` allOf [Reply "OK!"]
         it "notifies channel of the new puzzle" $ putJson "v2/puzzle" [json|{puzzle: "TRÖJAPIKÉ", user: "foo"}|] `shouldRespondWith` allOf [Notification "Dagens nia är **TRÖ JAP IKE**"]
         it "stores the new puzzle" $ do
           putJson "v2/puzzle" [json|{puzzle: "TRÖJAPIKÉ", user: "foo"}|] `shouldRespondWith` allOf [Notification "Dagens nia är **TRÖ JAP IKE**"]
@@ -61,3 +61,12 @@ spec = do
               $ putJson "v2/puzzle" [json|{puzzle: "JATRÖPIKÉ", user:"foo"}|]
               `shouldRespondWith` exactly [Reply "Nian är redan satt till TRÖ JAP IKE"]
           describe "for a new puzzle" $ it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "TRIVASVAN", user:"foo"}|] `shouldRespondWith` atLeastOneOf [Reply "OK!"]
+  describe "with invalid input" $ do
+    let p = puzzle "FOOBARBAZ"
+    let s = def
+
+    let es = setPuzzle testDictionary (withUser "foo" $ SetPuzzle p) s
+    let s' = applyAll s es
+
+    it "does not change the puzzle" $ currentPuzzle s' `shouldBe` currentPuzzle s
+    it "replies with invalid puzzle" $ withoutUser es `shouldBe` [InvalidPuzzleSet p]
