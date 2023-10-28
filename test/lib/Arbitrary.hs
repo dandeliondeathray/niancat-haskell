@@ -19,7 +19,7 @@ newtype Valid = Valid Word deriving (Show)
 newtype Invalid = Invalid Word deriving (Show)
 
 instance Arbitrary Word where
-  arbitrary = word <$> arbitrary
+  arbitrary = Word <$> arbitrary
 
 instance Arbitrary Valid where
   arbitrary = do
@@ -30,7 +30,7 @@ instance Arbitrary Valid where
 
 instance Arbitrary Invalid where
   arbitrary = do
-    w <- word <$> arbitrary
+    w <- Word <$> arbitrary
     if has testDictionary w
       then discard
       else return . Invalid $ w

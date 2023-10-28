@@ -20,7 +20,7 @@ build =
     . fromList
     . groupKey wkey
     . nub
-    . fmap (word . pack)
+    . fmap (Word . pack)
     . filter ((== 9) . length)
 
 has :: Dictionary -> Word -> Bool

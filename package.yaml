@@ -42,6 +42,7 @@ library:
     - system-filepath
     - text
     - text-show
+    - time
     - unordered-containers
     - vector
     - wai

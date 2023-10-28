@@ -31,7 +31,7 @@ have feature-parity with the Scala version.
 
 ## Building for production
 
-1. `docker build . -t niancat-haskell` builds an application image. This
+1. `docker build . -t niancat-haskell` builds an image. This
    also downloads the world; however, unless you make package changes,
    the long-running steps will be cached.
 

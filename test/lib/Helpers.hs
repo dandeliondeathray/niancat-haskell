@@ -13,26 +13,26 @@ import Test.Hspec.Wai
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
-
+import Context
 import Service
 
 testDictionary :: Dictionary
 testDictionary =
   Dictionary $
     Map.fromList
-      [ (key "VANTRIVAS", [word "VANTRIVAS"]),
-        (key "PIKÉTRÖJA", [word "PIKÉTRÖJA"]),
-        (key "DATORSPEL", [word "DATORSPEL", word "SPELDATOR", word "REPSOLDAT", word "LEDARPOST"])
+      [ (key "VANTRIVAS", [Word "VANTRIVAS"]),
+        (key "PIKÉTRÖJA", [Word "PIKÉTRÖJA"]),
+        (key "DATORSPEL", [Word "DATORSPEL", Word "SPELDATOR", Word "REPSOLDAT", Word "LEDARPOST"])
       ]
 
-withS :: NiancatState -> SpecWith (TVar NiancatState, Application) -> Spec
+withS :: NiancatState -> SpecWith (Ctx, Application) -> Spec
 withS s = withState (buildNiancat testDictionary s)
 
-assertS :: (NiancatState -> IO ()) -> WaiSession (TVar NiancatState) ()
+assertS :: (NiancatState -> IO ()) -> WaiSession Ctx ()
 assertS assertion = do
   st <- getState
   liftIO $ do
-    s <- readTVarIO st
+    s <- readTVarIO (state st)
     assertion s
 
 sendJson :: Method -> B.ByteString -> LB.ByteString -> WaiSession st SResponse

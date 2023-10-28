@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Features.SolvePuzzle where
 
@@ -10,21 +11,19 @@ import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
 
-data SubmitSolution
-  = SubmitSolution User Word
-  deriving (Show, Eq)
+newtype SubmitSolution = SubmitSolution Word deriving (Show, Eq)
 
-instance FromJSON SubmitSolution where
+instance FromJSON (WithUser SubmitSolution) where
   parseJSON =
     withObject "solution" $ \v -> do
-      user <- v .: "user"
+      u <- User <$> v .: "user"
       solution <- v .: "solution"
-      return $ SubmitSolution (User user) (word solution)
+      return $ withUser u $ SubmitSolution (Word solution)
 
-solvePuzzle :: Dictionary -> SubmitSolution -> NiancatState -> [NiancatEvent]
-solvePuzzle dict (SubmitSolution u w) s =
-  case currentPuzzle s of
+solvePuzzle :: Dictionary -> WithUser SubmitSolution -> NiancatState -> WithUser [NiancatEvent]
+solvePuzzle dict (WithUser (u, SubmitSolution w)) s =
+  withUser u $ case currentPuzzle s of
       Just p -> if solves dict w p
-                then [CorrectSolutionSubmitted w u $ firstTime u w s]
+                then [CorrectSolutionSubmitted w $ firstTime u w s]
                 else [IncorrectSolutionSubmitted w]
       Nothing -> [SolutionSubmittedWithNoPuzzleSet]

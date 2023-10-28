@@ -1,5 +1,5 @@
 {
     "hoogle-vscode.url": "http://hoogle.haskell.org/",
     "editor.tabSize": 2,
-    "haskell.formattingProvider": "brittany",
+    "haskell.formattingProvider": "fourmolu",
 }

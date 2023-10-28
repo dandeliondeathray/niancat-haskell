@@ -15,7 +15,7 @@ spec = do
     let input = ["short", "muchtoolong", "ninechars"]
     it "takes only words with 9 letters" $ do
       let (Dictionary dict) = build input
-      elems dict `shouldBe` [[word "NINECHARS"]]
+      elems dict `shouldBe` [[Word "NINECHARS"]]
     it "keys by Puzzle.key" $ do
       let (Dictionary dict) = build input
       keys dict `shouldBe` [key "ninechars"]

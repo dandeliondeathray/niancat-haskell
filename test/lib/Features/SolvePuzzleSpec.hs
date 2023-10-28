@@ -24,20 +24,24 @@ spec :: Spec
 spec = do
   let user = "foobar"
   describe "in an initial state" $ do
-    withS def $
-      describe "submitting a solution" $ do
+    withS def
+      $ describe "submitting a solution"
+      $ do
         let act = postSolution user "VANTRIVAS"
         it "respons with NotSet" $ act `shouldRespondWith` allOf [Reply "Nian är inte satt än!"]
         it "respons with status 200" $ act `shouldRespondWith` 200
-  describe "with a puzzle set" $
-    withS def {currentPuzzle = Just $ puzzle "TRIVASVAN"} $ do
-      describe "submitting an incorrect solution" $
-        context "with matching letters" $ do
+  describe "with a puzzle set"
+    $ withS def{currentPuzzle = Just $ puzzle "TRIVASVAN"}
+    $ do
+      describe "submitting an incorrect solution"
+        $ context "with matching letters"
+        $ do
           it "in canonical form" $ postSolution user "SVANTRIVA" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
           it "in other form" $ postSolution user "svantriva" `shouldRespondWith` exactly [Reply "Ordet SVANTRIVA finns inte med i SAOL."]
       describe "submitting a correct solution" $ do
-        it "responds that the answer is correct" $
-          postSolution user "VANTRIVAS" `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
+        it "responds that the answer is correct"
+          $ postSolution user "VANTRIVAS"
+          `shouldRespondWith` exactly [Reply "Ordet VANTRIVAS är korrekt!"]
         it "adds the user to today's solvers" $ do
           _ <- postSolution user "VANTRIVAS"
-          assertS $ \s -> solvers s `shouldBe` fromList [(word "VANTRIVAS",[ User "foobar"])]
+          assertS $ \s -> solvers s `shouldBe` fromList [(Word "VANTRIVAS", [User "foobar"])]

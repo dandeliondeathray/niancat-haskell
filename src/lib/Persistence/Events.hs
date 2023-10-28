@@ -1,0 +1,52 @@
+module Persistence.Events where
+
+import Control.Concurrent.STM
+import Data.Aeson
+import Data.Text (Text, intercalate)
+import Data.Time
+
+import Niancat.Domain
+import Niancat.Puzzle
+
+type StoredEvent = (NiancatEvent, User, UTCTime)
+event :: StoredEvent -> NiancatEvent
+event (e, _, _) = e
+user :: StoredEvent -> User
+user (_, u, _) = u
+timestamp :: StoredEvent -> UTCTime
+timestamp (_, _, t) = t
+
+class Store s where
+  empty :: IO s
+  getAll :: s -> IO [(NiancatEvent, User, UTCTime)]
+  getSince :: UTCTime -> s -> IO [(NiancatEvent, User, UTCTime)]
+  append :: s -> UTCTime -> User -> [NiancatEvent] -> IO ()
+
+type EventStream = TVar [(NiancatEvent, User, UTCTime)]
+
+newtype Serializable = Serializable (NiancatEvent, User, UTCTime)
+
+eventType :: NiancatEvent -> Text
+eventType (PuzzleSet _) = "puzzle-set"
+eventType (InvalidPuzzleSet _) = "puzzle-set:invalid"
+eventType (SamePuzzleSet _) = "puzzle-set:same"
+eventType (CorrectSolutionSubmitted{}) = "solution-submitted:correct"
+eventType (IncorrectSolutionSubmitted _) = "solution-submitted:incorrect"
+eventType SolutionSubmittedWithNoPuzzleSet = "solution-submitted:no-puzzle-set"
+
+eventData :: NiancatEvent -> Value
+eventData (PuzzleSet p) = object ["puzzle" .= show p]
+eventData (InvalidPuzzleSet p) = object ["puzzle" .= show p]
+eventData (SamePuzzleSet p) = object ["puzzle" .= show p]
+eventData (CorrectSolutionSubmitted (Word w) f) = object ["word" .= w, "first-time" .= isFirstTime f]
+eventData (IncorrectSolutionSubmitted w) = object ["word" .= show w]
+eventData SolutionSubmittedWithNoPuzzleSet = object []
+
+instance ToJSON Serializable where
+  toJSON (Serializable (e, User u, t)) =
+    object
+      [ "type" .= intercalate "/" [(eventType e), "v1"]
+      , "timestamp" .= toJSON t
+      , "user" .= u
+      , "data" .= eventData e
+      ]
