@@ -17,7 +17,7 @@ instance Store InMemoryStore where
 
   getSince t = fmap (sortBy (comparing timestamp) . filter ((> t) . timestamp)) . readTVarIO . events
 
-  append s t u es = atomically $ do
+  append t u es s = atomically $ do
     es' <- readTVar $ events s
     let es'' = es' ++ ((,u,t) <$> es)
     writeTVar (events s) es''

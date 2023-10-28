@@ -17,13 +17,13 @@ timestamp :: StoredEvent -> UTCTime
 timestamp (_, _, t) = t
 
 class Store s where
-  getAll :: s -> IO [(NiancatEvent, User, UTCTime)]
-  getSince :: UTCTime -> s -> IO [(NiancatEvent, User, UTCTime)]
-  append :: s -> UTCTime -> User -> [NiancatEvent] -> IO ()
+  getAll :: s -> IO [StoredEvent]
+  getSince :: UTCTime -> s -> IO [StoredEvent]
+  append :: UTCTime -> User -> [NiancatEvent] -> s -> IO ()
 
-type EventStream = TVar [(NiancatEvent, User, UTCTime)]
+type EventStream = TVar [StoredEvent]
 
-newtype Serializable = Serializable (NiancatEvent, User, UTCTime)
+newtype Serializable = Serializable StoredEvent
 
 eventType :: NiancatEvent -> Text
 eventType (PuzzleSet _) = "puzzle-set"
@@ -44,7 +44,7 @@ eventData SolutionSubmittedWithNoPuzzleSet = object []
 instance ToJSON Serializable where
   toJSON (Serializable (e, User u, t)) =
     object
-      [ "type" .= intercalate "/" [(eventType e), "v1"]
+      [ "type" .= intercalate "/" [eventType e, "v1"]
       , "timestamp" .= toJSON t
       , "user" .= u
       , "data" .= eventData e

@@ -33,7 +33,7 @@ command resolver = do
       let s' = foldl apply s (fmap (withUser u) es)
       when (s' /= s) (writeTVar ts s')
       return (u, es)
-    append st now u' es
+    append now u' es st
     return $ es >>= messages
 
 debug :: ToJSON a => (Ctx -> IO a) -> AppM a
