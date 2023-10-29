@@ -40,7 +40,7 @@ niancat dict s = server s niancatAPI features
   where
     features =
       query getPuzzle
-        :<|> withProjections [streaks] . setPuzzle dict
+        :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
         :<|> command . solvePuzzle dict
         :<|> project streaks
         :<|> debug events

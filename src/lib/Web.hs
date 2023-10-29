@@ -39,16 +39,5 @@ command resolver = do
     append (fmap (imbue u now) es) st
     return $ es >>= messages
 
-withProjections :: (Store s, Response r) => [[EventWithMeta] -> r] -> (NiancatState -> WithUser [NiancatEvent]) -> AppM s [Message]
-withProjections projections resolver = do
-  cmdResults <- command resolver
-
-  st <- asks store
-  projectionResults <- liftIO $ do
-    es <- getAll st
-    return $ concatMap (messages . (\f -> f es)) projections
-
-  return $ cmdResults ++ projectionResults
-
 debug :: (Store s, ToJSON a) => (Ctx s -> IO a) -> AppM s a
 debug resolver = ask >>= liftIO . resolver
