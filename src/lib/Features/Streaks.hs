@@ -3,6 +3,7 @@ module Features.Streaks where
 import Data.Default.Class
 import Data.List hiding (intercalate, lines, lookup, map)
 import Data.Map hiding (foldl)
+import Data.Maybe (fromMaybe)
 import Data.Ord
 import Data.Text hiding (elem, empty, foldl, lines, map, unpack)
 import Data.Time
@@ -35,16 +36,11 @@ march s (Imbued e (Meta u ts)) = applyEvent e
     countScore =
       SS
         { currentScore = empty,
-          unbroken = filtered (currentScore s) $ tally (unbroken s) (currentScore s),
+          unbroken = mapWithKey (tally (unbroken s)) (currentScore s),
           counts = newPuzzleCounts
         }
       where
-        tally :: Map User Int -> Map User Int -> Map User Int
-        tally ub cs = foldl tallyOne ub $ toList cs
-          where
-            tallyOne :: Map User Int -> (User, Int) -> Map User Int
-            tallyOne m (u', c) = insertWith (+) u' c m
-        filtered cs = filterWithKey (\k _ -> k `member` cs)
+        tally prev u' b = b + fromMaybe 0 (lookup u' prev)
 
 streaks :: [EventWithMeta] -> StreaksReport
 streaks = report . unbroken . foldl march def
