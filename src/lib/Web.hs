@@ -6,7 +6,7 @@ import Data.Aeson
 import Servant
 
 import Context
-import Data.Time
+
 import Niancat.Domain
 import Niancat.Replies
 import Persistence.Events
@@ -19,13 +19,19 @@ query resolver = do
   s <- liftIO $ readTVarIO ts
   return $ messages . resolver $ s
 
-type Resolver = (NiancatState -> WithUser [NiancatEvent])
-command :: (Store s) => Resolver -> AppM s [Message]
+project :: (Store s, Response r) => ([EventWithMeta] -> r) -> AppM s [Message]
+project resolver = do
+  s <- asks store
+  es <- liftIO $ getAll s
+  return $ messages . resolver $ es
+
+command :: (Store s) => (NiancatState -> WithUser [NiancatEvent]) -> AppM s [Message]
 command resolver = do
   ts <- asks state
   st <- asks store
+  clock' <- asks clock
   liftIO $ do
-    now <- getCurrentTime
+    now <- clock'
     (u, es) <- atomically $ do
       s <- readTVar ts
       let WithUser (u, es) = resolver s
@@ -34,6 +40,17 @@ command resolver = do
       return (u, es)
     append (fmap (imbue u now) es) st
     return $ es >>= messages
+
+withProjections :: (Store s, Response r) => [[EventWithMeta] -> r] -> (NiancatState -> WithUser [NiancatEvent]) -> AppM s [Message]
+withProjections projections resolver = do
+  cmdResults <- command resolver
+
+  st <- asks store
+  projectionResults <- liftIO $ do
+    es <- getAll st
+    return $ concatMap (messages . (\f -> f es)) projections
+
+  return $ cmdResults ++ projectionResults
 
 debug :: (Store s, ToJSON a) => (Ctx s -> IO a) -> AppM s a
 debug resolver = ask >>= liftIO . resolver

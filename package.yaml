@@ -84,6 +84,7 @@ tests:
     - stm
     - text
     - text-show
+    - time
 
     - wai
     - wai-extra

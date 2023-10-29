@@ -1,5 +1,4 @@
 {-# LANGUAGE QuasiQuotes #-}
-{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 
 module Features.SetPuzzleSpec where
 
@@ -18,19 +17,18 @@ import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
 
-emptyState = def :: NiancatState
-
+spec :: Spec
 spec = do
   describe "in an initial state" $ do
     describe "setting the puzzle" $ do
-      let s = emptyState
+      let s = def
       let p = puzzle "TRÖJAPIKÉ"
       let cmd = withUser "foo" $ SetPuzzle p
       let es = setPuzzle testDictionary cmd s
       let s' = applyAll s es
       it "updates the puzzle" $ currentPuzzle s' `shouldBe` Just p
       it "responds with PuzzleSet" $ es `shouldBe` withUser "foo" [PuzzleSet p]
-    withS emptyState
+    withS def
       $ describe "PUT v2/puzzle"
       $ do
         it "replies OK!" $ putJson "v2/puzzle" [json|{puzzle: "JATRÖPIKÉ", user: "foo"}|] `shouldRespondWith` allOf [Reply "OK!"]

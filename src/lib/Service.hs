@@ -20,6 +20,7 @@ import Features.SolvePuzzle
 
 import Context
 import Debug.Events
+import Features.Streaks
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
@@ -30,6 +31,7 @@ type NiancatAPI =
   "v2" :> "puzzle" :> Get '[JSON] [Message]
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
+    :<|> "v2" :> "streaks" :> Get '[JSON] [Message]
     :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [EventWithMeta]
 
 niancatAPI :: Proxy NiancatAPI
@@ -40,14 +42,15 @@ niancat dict s = server s niancatAPI features
  where
   features =
     query getPuzzle
-      :<|> command . setPuzzle dict
+      :<|> withProjections [streaks] . setPuzzle dict
       :<|> command . solvePuzzle dict
+      :<|> project streaks
       :<|> debug events
 
 nt :: (Store s) => Ctx s -> AppM s a -> Handler a
 nt s x = runReaderT x s
 
-server :: (HasServer a '[], Store s) => (Ctx s) -> Proxy a -> ServerT a (AppM s) -> Application
+server :: (HasServer a '[], Store s) => Ctx s -> Proxy a -> ServerT a (AppM s) -> Application
 server s p srv = errorsAsJson $ serve p $ hoistServer p (nt s) srv
 
 getDictionary :: IO Dictionary

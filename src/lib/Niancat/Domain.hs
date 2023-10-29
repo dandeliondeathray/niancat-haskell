@@ -15,7 +15,7 @@ import Niancat.Puzzle
 
 newtype User
   = User Text
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 newtype WithUser a = WithUser (User, a) deriving (Show, Eq)
 withUser :: User -> a -> WithUser a

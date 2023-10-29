@@ -11,6 +11,7 @@ import Test.Hspec
 import Test.Hspec.Wai
 
 import Context
+import Data.Time (UTCTime, getCurrentTime)
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
@@ -31,7 +32,17 @@ withS :: NiancatState -> SpecWith (Ctx InMemoryStore, Application) -> Spec
 withS s = withState $ do
   s' <- newTVarIO s
   e' <- newInMemoryStore
-  let ctx = Ctx{state = s', store = e'}
+  let c = getCurrentTime
+  let ctx = Ctx{state = s', store = e', clock = c}
+
+  return (ctx, niancat testDictionary ctx)
+
+withContext :: IO UTCTime -> NiancatState -> [EventWithMeta] -> SpecWith (Ctx InMemoryStore, Application) -> Spec
+withContext c s es = withState $ do
+  s' <- newTVarIO s
+  e' <- newInMemoryStore
+  liftIO $ append es e'
+  let ctx = Ctx{state = s', store = e', clock = c}
 
   return (ctx, niancat testDictionary ctx)
 
