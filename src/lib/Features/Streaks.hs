@@ -43,12 +43,12 @@ march s (Imbued e (Meta u ts)) = applyEvent e
         tally prev u' b = b + fromMaybe 0 (lookup u' prev)
 
 streaks :: [EventWithMeta] -> StreaksReport
-streaks = report . unbroken . foldl march def
+streaks = report . foldl march def
 
 newtype StreaksReport = Streaks (Map Int [User]) deriving (Show, Eq)
 
-report :: Map User Int -> StreaksReport
-report = Streaks . map sort . foldlWithKey (\m u c -> insertWith (++) c [u] m) empty
+report :: StreakState -> StreaksReport
+report = Streaks . map sort . foldlWithKey (\m u c -> insertWith (++) c [u] m) empty . unbroken
 
 instance Response StreaksReport where
   messages (Streaks m) | m == empty = []
