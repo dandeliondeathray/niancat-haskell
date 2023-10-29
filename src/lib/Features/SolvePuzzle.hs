@@ -5,11 +5,10 @@ module Features.SolvePuzzle where
 
 import Data.Aeson
 import Data.Maybe
-import Prelude hiding (Word, lookup)
-
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
+import Prelude hiding (Word, lookup)
 
 newtype SubmitSolution = SubmitSolution Word deriving (Show, Eq)
 
@@ -23,7 +22,8 @@ instance FromJSON (WithUser SubmitSolution) where
 solvePuzzle :: Dictionary -> WithUser SubmitSolution -> NiancatState -> WithUser [NiancatEvent]
 solvePuzzle dict (WithUser (u, SubmitSolution w)) s =
   withUser u $ case currentPuzzle s of
-      Just p -> if solves dict w p
-                then [CorrectSolutionSubmitted w $ firstTime u w s]
-                else [IncorrectSolutionSubmitted w]
-      Nothing -> [SolutionSubmittedWithNoPuzzleSet]
+    Just p ->
+      if solves dict w p
+        then [CorrectSolutionSubmitted w $ firstTime u w s]
+        else [IncorrectSolutionSubmitted w]
+    Nothing -> [SolutionSubmittedWithNoPuzzleSet]

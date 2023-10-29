@@ -11,29 +11,29 @@ import Network.Wai
 
 errorsAsJson :: Middleware
 errorsAsJson baseApp req respond = baseApp req respond'
- where
-  respond' response = do
-    body <- responseBody response
-    let response' = createErrorResponse status body
-        status = responseStatus response
-        contentType = find ((hContentType ==) . fst) . responseHeaders $ response
-    case (status, contentType) of
-      (s, Nothing)
-        | statusIsClientError s || statusIsServerError s ->
-            respond response'
-      _ -> respond response
+  where
+    respond' response = do
+      body <- responseBody response
+      let response' = createErrorResponse status body
+          status = responseStatus response
+          contentType = find ((hContentType ==) . fst) . responseHeaders $ response
+      case (status, contentType) of
+        (s, Nothing)
+          | statusIsClientError s || statusIsServerError s ->
+              respond response'
+        _ -> respond response
 
 createErrorResponse :: Status -> LB.ByteString -> Response
 createErrorResponse status body = responseLBS status headers body'
- where
-  Status code msg = status
-  headers = [(hContentType, "application/json")]
-  body' =
-    encode
-      . object
-      $ [ ("status", toJSON code)
-        , ("message", String $ if body == mempty then cs msg else cs body)
-        ]
+  where
+    Status code msg = status
+    headers = [(hContentType, "application/json")]
+    body' =
+      encode
+        . object
+        $ [ ("status", toJSON code),
+            ("message", String $ if body == mempty then cs msg else cs body)
+          ]
 
 responseBody :: Response -> IO LB.ByteString
 responseBody res =

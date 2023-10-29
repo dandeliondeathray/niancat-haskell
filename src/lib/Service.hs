@@ -4,27 +4,25 @@
 
 module Service where
 
+import Context
 import Control.Monad.Reader
 import Data.Default.Class
 import Data.Functor
 import Data.Maybe
+import Debug.Events
 import Errors
-import Network.Wai.Handler.Warp
-import Network.Wai.Middleware.RequestLogger
-import Servant
-import System.Environment
-
 import Features.GetPuzzle
 import Features.SetPuzzle
 import Features.SolvePuzzle
-
-import Context
-import Debug.Events
 import Features.Streaks
+import Network.Wai.Handler.Warp
+import Network.Wai.Middleware.RequestLogger
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
 import Persistence.Events
+import Servant
+import System.Environment
 import Web
 
 type NiancatAPI =
@@ -39,13 +37,13 @@ niancatAPI = Proxy
 
 niancat :: (Store s) => Dictionary -> Ctx s -> Application
 niancat dict s = server s niancatAPI features
- where
-  features =
-    query getPuzzle
-      :<|> withProjections [streaks] . setPuzzle dict
-      :<|> command . solvePuzzle dict
-      :<|> project streaks
-      :<|> debug events
+  where
+    features =
+      query getPuzzle
+        :<|> withProjections [streaks] . setPuzzle dict
+        :<|> command . solvePuzzle dict
+        :<|> project streaks
+        :<|> debug events
 
 nt :: (Store s) => Ctx s -> AppM s a -> Handler a
 nt s x = runReaderT x s
@@ -57,9 +55,9 @@ getDictionary :: IO Dictionary
 getDictionary =
   lookupEnv "DICTIONARY_FILE"
     >>= readFile
-    . fromMaybe "saol.txt"
+      . fromMaybe "saol.txt"
     <&> build
-    . lines
+      . lines
 
 runNiancat :: IO ()
 runNiancat = do

@@ -2,9 +2,8 @@ module Niancat.Replies where
 
 import Data.Aeson
 import Data.Text
-import TextShow
-
 import Niancat.Domain
+import TextShow
 
 data Message
   = Notification Text

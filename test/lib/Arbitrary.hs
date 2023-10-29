@@ -4,18 +4,17 @@ module Arbitrary where
 
 import Control.Applicative
 import Data.Map (toList)
+import Helpers
+import Niancat.Dictionary
+import Niancat.Puzzle
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary ()
 import Test.QuickCheck.Gen ()
 import Test.QuickCheck.Instances.Text ()
 import Prelude hiding (Word)
 
-import Niancat.Dictionary
-import Niancat.Puzzle
-
-import Helpers
-
 newtype Valid = Valid Word deriving (Show)
+
 newtype Invalid = Invalid Word deriving (Show)
 
 instance Arbitrary Word where

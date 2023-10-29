@@ -1,15 +1,13 @@
 module Web where
 
+import Context
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Aeson
-import Servant
-
-import Context
-
 import Niancat.Domain
 import Niancat.Replies
 import Persistence.Events
+import Servant
 
 type AppM s = ReaderT (Ctx s) Handler
 

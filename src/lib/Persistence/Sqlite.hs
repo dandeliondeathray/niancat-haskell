@@ -16,10 +16,10 @@ import Persistence.Events hiding (eventData, eventType, timestamp, user)
 import qualified Persistence.Events as PE
 
 data EventRecord = Record
-  { user :: Text
-  , timestamp :: UTCTime
-  , eventType :: Text
-  , eventData :: ByteString
+  { user :: Text,
+    timestamp :: UTCTime,
+    eventType :: Text,
+    eventData :: ByteString
   }
   deriving (Eq, Show, Generic)
 
@@ -33,17 +33,17 @@ instance ToEventWithMeta EventRecord where
     case parse p d of
       Error s -> Left s
       Success a -> Right $ Imbued a (Meta u ts)
-   where
-    u = User $ user record
-    ts = timestamp record
+    where
+      u = User $ user record
+      ts = timestamp record
 
 instance FromEventWithMeta EventRecord where
   marshal (Imbued e (Meta (User u) t)) =
     Record
-      { user = u
-      , timestamp = t
-      , eventType = PE.eventType e
-      , eventData = encode $ PE.eventData e
+      { user = u,
+        timestamp = t,
+        eventType = PE.eventType e,
+        eventData = encode $ PE.eventData e
       }
 
 events :: Table EventRecord
@@ -81,7 +81,7 @@ instance Store SqliteStore where
 initSqlite :: FilePath -> IO SqliteStore
 initSqlite cs = withSQLite cs $ do
   tryCreateTable events
-  return Sqlite{connStr = cs}
+  return Sqlite {connStr = cs}
 
 readRecords :: [EventRecord] -> [EventWithMeta]
 readRecords records =

@@ -3,7 +3,6 @@ module Persistence.InMemory where
 import Control.Concurrent.STM
 import Data.List hiding (intercalate)
 import Data.Ord
-
 import Persistence.Events
 
 newtype InMemoryStore = InMemory
@@ -20,4 +19,4 @@ instance Store InMemoryStore where
 newInMemoryStore :: IO InMemoryStore
 newInMemoryStore = do
   es <- newTVarIO []
-  return InMemory{events = es}
+  return InMemory {events = es}

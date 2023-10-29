@@ -3,11 +3,10 @@ module DictionarySpec where
 import Arbitrary
 import Data.Map
 import Helpers
-import Test.Hspec
-import Test.Hspec.QuickCheck
-
 import Niancat.Dictionary
 import Niancat.Puzzle
+import Test.Hspec
+import Test.Hspec.QuickCheck
 
 spec :: Spec
 spec = do

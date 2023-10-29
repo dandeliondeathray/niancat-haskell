@@ -7,9 +7,8 @@ import Data.Maybe
 import Data.NonEmpty.Mixed (groupKey)
 import Data.Text.Lazy (pack)
 import GHC.Exts hiding (Word, toList)
-import Prelude hiding (Word, map)
-
 import Niancat.Puzzle
+import Prelude hiding (Word, map)
 
 newtype Dictionary = Dictionary (Map Key [Word])
 

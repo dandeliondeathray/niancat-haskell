@@ -1,10 +1,9 @@
 module Persistence.Events where
 
-import Data.Time
-
 import Data.Aeson
 import Data.Aeson.Types
 import Data.Text
+import Data.Time
 import Niancat.Domain
 import Niancat.Puzzle
 
@@ -31,6 +30,7 @@ class Store s where
 
 class ToEventWithMeta a where
   unmarshal :: a -> Either String EventWithMeta
+
 class FromEventWithMeta a where
   marshal :: EventWithMeta -> a
 
@@ -38,7 +38,7 @@ eventType :: NiancatEvent -> Text
 eventType (PuzzleSet _) = "puzzle-set"
 eventType (InvalidPuzzleSet _) = "puzzle-set:invalid"
 eventType (SamePuzzleSet _) = "puzzle-set:same"
-eventType (CorrectSolutionSubmitted{}) = "solution-submitted:correct"
+eventType (CorrectSolutionSubmitted {}) = "solution-submitted:correct"
 eventType (IncorrectSolutionSubmitted _) = "solution-submitted:incorrect"
 eventType SolutionSubmittedWithNoPuzzleSet = "solution-submitted:no-puzzle-set"
 
@@ -67,10 +67,10 @@ parserFor t = do
 instance ToJSON EventWithMeta where
   toJSON (Imbued e (Meta (User u) t)) =
     object
-      [ "timestamp" .= t
-      , "user" .= u
-      , "eventType" .= eventType e
-      , "eventData" .= eventData e
+      [ "timestamp" .= t,
+        "user" .= u,
+        "eventType" .= eventType e,
+        "eventData" .= eventData e
       ]
 
 instance FromJSON EventWithMeta where

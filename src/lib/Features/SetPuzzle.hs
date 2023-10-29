@@ -3,7 +3,6 @@
 module Features.SetPuzzle where
 
 import Data.Aeson
-
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
@@ -18,8 +17,8 @@ instance FromJSON (WithUser SetPuzzle) where
 
 setPuzzle :: Dictionary -> WithUser SetPuzzle -> NiancatState -> WithUser [NiancatEvent]
 setPuzzle dict (WithUser (u, SetPuzzle p)) s = withUser u $ set (currentPuzzle s) (valid dict p)
- where
-  set _ False = [InvalidPuzzleSet p]
-  set (Just p') True | p' == p = [SamePuzzleSet p']
-  set Nothing True = [PuzzleSet p]
-  set (Just _) True = [PuzzleSet p]
+  where
+    set _ False = [InvalidPuzzleSet p]
+    set (Just p') True | p' == p = [SamePuzzleSet p']
+    set Nothing True = [PuzzleSet p]
+    set (Just _) True = [PuzzleSet p]

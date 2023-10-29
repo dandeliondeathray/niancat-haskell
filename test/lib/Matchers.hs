@@ -9,9 +9,8 @@ where
 
 import Control.Monad
 import Data.Aeson
-import Test.Hspec.Wai
-
 import Niancat.Replies
+import Test.Hspec.Wai
 
 instance FromJSON Message where
   parseJSON =
