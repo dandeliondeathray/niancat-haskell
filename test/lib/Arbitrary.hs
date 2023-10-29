@@ -62,3 +62,6 @@ instance Arbitrary Weekend where
 
 instance Arbitrary UTCTime where
   arbitrary = elements [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+
+instance Arbitrary FirstTime where
+  arbitrary = FirstTime <$> arbitrary

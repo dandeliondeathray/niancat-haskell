@@ -4,6 +4,7 @@ module Features.StreaksSpec where
 
 import Arbitrary
 import Data.Map
+import Data.Maybe
 import Data.Time
 import Features.Streaks
 import Helpers
@@ -17,6 +18,7 @@ import Test.Hspec.QuickCheck
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
 import Test.QuickCheck.Monadic ()
+import Prelude hiding (lookup)
 
 spec :: Spec
 spec = do
@@ -52,16 +54,51 @@ spec = do
                 before = s {counts = True}
                 after = march before (imbue u ts (PuzzleSet p))
 
-        -- prop "bumps score for everyone who had solved the puzzle" $ \s u p ts -> do
-        --   let (before, after) = states s u p ts
-        --   True `shouldBe` False
-        -- prop "resets the score for everyone who had not solved the puzzle" $ \s u p ts -> do
-        --   let (before, after) = states s u p ts
-        --   True `shouldBe` False
+        prop "bumps streak scores for anyone with a nonzero score" $ \s u p ts -> do
+          let (before, after) = states s u p ts
+          let bumped = intersectionWith (+) (unbroken before) (currentScore before)
+          unbroken after `intersection` bumped `shouldBe` bumped
+
+        prop "zeroes streak scores for anyone who didn't solve" $ \s u p ts -> do
+          let (before, after) = states s u p ts
+          let usersWithStreaksAfter = keys (unbroken after)
+
+          all (`member` currentScore before) usersWithStreaksAfter `shouldBe` True
 
         prop "resets the current score counter" $ \s u p ts -> do
           let (_, after) = states s u p ts
           currentScore after `shouldBe` empty
+
+    describe "solving the puzzle" $ do
+      context "when the current puzzle does not count" $ do
+        let states s u w f ts = (before, after)
+              where
+                before = s {counts = False}
+                after = march before (imbue u ts (CorrectSolutionSubmitted w f))
+
+        prop "does not affect current score" $ \s u w f ts -> do
+          let (before, after) = states s u w f ts
+          currentScore after `shouldBe` currentScore before
+
+        prop "does not affect unbroken streaks" $ \s u w f ts -> do
+          let (before, after) = states s u w f ts
+          unbroken after `shouldBe` unbroken before
+
+      context "when the current puzzle counts" $ do
+        let states s u w f ts = (before, after)
+              where
+                before = s {counts = True}
+                after = march before (imbue u ts (CorrectSolutionSubmitted w f))
+
+        context "when it is the first time the user submits this solution" $ do
+          prop "bumps user's score by 1" $ \s u w ts -> do
+            let (before, after) = states s u w (FirstTime True) ts
+            currentScore after ! u `shouldBe` 1 + fromMaybe 0 (lookup u (currentScore before))
+
+        context "when it is not the first time the user submits this solution" $ do
+          prop "does not bump any score" $ \s u w ts -> do
+            let (before, after) = states s u w (FirstTime False) ts
+            currentScore after `shouldBe` currentScore before
 
   describe "PUT /v2/puzzle" $ do
     let pastEvents =
