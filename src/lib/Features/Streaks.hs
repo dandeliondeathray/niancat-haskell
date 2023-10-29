@@ -22,31 +22,31 @@ data StreakState = SS
 instance Default StreakState where
   def = SS {currentScore = empty, unbroken = empty, counts = False}
 
-streaks :: [EventWithMeta] -> StreaksReport
-streaks = report . unbroken . foldl applyM s0
+march :: StreakState -> EventWithMeta -> StreakState
+march s (Imbued e (Meta u ts)) = applyEvent e s
   where
-    s0 = def :: StreakState
-    applyM s (Imbued e (Meta u ts)) = apply e s
+    applyEvent (PuzzleSet _) s'
+      | counts s' =
+          SS
+            { currentScore = empty,
+              unbroken = filtered (currentScore s') $ tally (unbroken s') (currentScore s'),
+              counts = newPuzzleCounts
+            }
       where
-        apply (PuzzleSet _) s'
-          | counts s' =
-              SS
-                { currentScore = empty,
-                  unbroken = filtered (currentScore s') $ tally (unbroken s') (currentScore s'),
-                  counts = newPuzzleCounts
-                }
+        tally :: Map User Int -> Map User Int -> Map User Int
+        tally ub cs = foldl tallyOne ub $ toList cs
           where
-            tally :: Map User Int -> Map User Int -> Map User Int
-            tally ub = foldl tallyOne ub . toList
-              where
-                tallyOne :: Map User Int -> (User, Int) -> Map User Int
-                tallyOne m (u', c) = insertWith (+) u' c m
-            filtered cs = filterWithKey (\k _ -> k `member` cs)
-        apply (PuzzleSet _) s' = s' {counts = newPuzzleCounts}
-        apply (CorrectSolutionSubmitted _ (FirstTime True)) s' | counts s' = s' {currentScore = insertWith (+) u 1 $ currentScore s'}
-        apply _ s' = s'
+            tallyOne :: Map User Int -> (User, Int) -> Map User Int
+            tallyOne m (u', c) = insertWith (+) u' c m
+        filtered cs = filterWithKey (\k _ -> k `member` cs)
+    applyEvent (PuzzleSet _) s' = s' {counts = newPuzzleCounts}
+    applyEvent (CorrectSolutionSubmitted _ (FirstTime True)) s' | counts s' = s' {currentScore = insertWith (+) u 1 $ currentScore s'}
+    applyEvent _ s' = s'
 
-        newPuzzleCounts = dayOfWeek (utctDay ts) `elem` [Monday, Tuesday, Wednesday, Thursday, Friday]
+    newPuzzleCounts = dayOfWeek (utctDay ts) `elem` [Monday, Tuesday, Wednesday, Thursday, Friday]
+
+streaks :: [EventWithMeta] -> StreaksReport
+streaks = report . unbroken . foldl march def
 
 newtype StreaksReport = Streaks (Map Int [User]) deriving (Show, Eq)
 
