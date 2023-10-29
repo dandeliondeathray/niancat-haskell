@@ -4,8 +4,11 @@ module Arbitrary where
 
 import Control.Applicative
 import Data.Map (toList)
+import Data.Time
+import Features.Streaks
 import Helpers
 import Niancat.Dictionary
+import Niancat.Domain
 import Niancat.Puzzle
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary ()
@@ -33,3 +36,29 @@ instance Arbitrary Invalid where
     if has testDictionary w
       then discard
       else return . Invalid $ w
+
+instance Arbitrary User where
+  arbitrary = User <$> arbitrary
+
+instance Arbitrary Puzzle where
+  arbitrary = puzzle <$> arbitrary
+
+instance Arbitrary StreakState where
+  arbitrary = do
+    c <- arbitrary
+    ub <- arbitrary
+    score <- arbitrary
+    return SS {currentScore = score, unbroken = ub, counts = c}
+
+newtype Weekday = Weekday UTCTime deriving (Show)
+
+instance Arbitrary Weekday where
+  arbitrary = Weekday <$> elements [monday, tuesday, wednesday, thursday, friday]
+
+newtype Weekend = Weekend UTCTime deriving (Show)
+
+instance Arbitrary Weekend where
+  arbitrary = Weekend <$> elements [saturday, sunday]
+
+instance Arbitrary UTCTime where
+  arbitrary = elements [monday, tuesday, wednesday, thursday, friday, saturday, sunday]

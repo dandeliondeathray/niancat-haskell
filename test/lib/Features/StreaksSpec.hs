@@ -2,6 +2,7 @@
 
 module Features.StreaksSpec where
 
+import Arbitrary
 import Data.Map
 import Data.Time
 import Features.Streaks
@@ -11,60 +12,56 @@ import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
 import Persistence.Events
-import Test.Hspec
+import Test.Hspec hiding (after, before)
+import Test.Hspec.QuickCheck
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
+import Test.QuickCheck.Monadic ()
 
 spec :: Spec
 spec = do
-  let monday =
-        UTCTime
-          { utctDay = fromGregorian 2023 10 30,
-            utctDayTime = secondsToDiffTime 32940 -- 09:09
-          }
-  let tuesday =
-        UTCTime
-          { utctDay = fromGregorian 2023 10 31,
-            utctDayTime = secondsToDiffTime 32940 -- 09:09
-          }
-
-  let wednesday =
-        UTCTime
-          { utctDay = fromGregorian 2023 11 01,
-            utctDayTime = secondsToDiffTime 32940 -- 09:09
-          }
-
-  describe "week days are correctly defined" $ do
-    it "monday" $ dayOfWeek (utctDay monday) `shouldBe` Monday
-    it "tuesday" $ dayOfWeek (utctDay tuesday) `shouldBe` Tuesday
-    it "wednesdah" $ dayOfWeek (utctDay wednesday) `shouldBe` Wednesday
-
   describe "streaks" $ do
-    it "empty events list yield no messages" $ do
-      streaks [] `shouldBe` Streaks empty
+    describe "setting the puzzle" $ do
+      context "on a weekday" $ do
+        prop "makes the new puzzle count" $ \s u p (Weekday ts) -> do
+          let s' = march s (imbue u ts (PuzzleSet p))
+          counts s' `shouldBe` True
 
-    it "setting the first puzzle yields no messages" $ do
-      streaks
-        [ imbue (User "foobar") monday (PuzzleSet $ puzzle "abc")
-        ]
-        `shouldBe` Streaks empty
+      context "on a weekend" $ do
+        prop "makes the new puzzle not count" $ \s u p (Weekend ts) -> do
+          let s' = march s (imbue u ts (PuzzleSet p))
+          counts s' `shouldBe` False
 
-    it "setting puzzle with a few solvers lists all of them" $ do
-      streaks
-        [ imbue (User "foobar") monday (PuzzleSet $ puzzle "abc"),
-          imbue (User "foobar") monday (CorrectSolutionSubmitted (Word "abc") (FirstTime True)),
-          imbue (User "raboof") monday (CorrectSolutionSubmitted (Word "abc") (FirstTime True)),
-          imbue (User "boofar") monday (CorrectSolutionSubmitted (Word "abc") (FirstTime True)),
-          imbue (User "rafoob") monday (CorrectSolutionSubmitted (Word "abc") (FirstTime True)),
-          imbue (User "foobar") tuesday (PuzzleSet $ puzzle "def"),
-          imbue (User "rafoob") tuesday (CorrectSolutionSubmitted (Word "abc") (FirstTime True)),
-          imbue (User "boofar") tuesday (CorrectSolutionSubmitted (Word "def") (FirstTime True)),
-          imbue (User "raboof") tuesday (CorrectSolutionSubmitted (Word "def") (FirstTime True)),
-          imbue (User "raboof") tuesday (CorrectSolutionSubmitted (Word "def") (FirstTime False)),
-          imbue (User "raboof") tuesday (CorrectSolutionSubmitted (Word "fde") (FirstTime True)),
-          imbue (User "foobar") wednesday (PuzzleSet $ puzzle "efg")
-        ]
-        `shouldBe` Streaks (fromList [(3, [User "raboof"]), (2, [User "boofar", User "rafoob"])])
+      describe "when the current one does not count" $ do
+        let states s u p ts = (before, after)
+              where
+                before = s {counts = False}
+                after = march before (imbue u ts (PuzzleSet p))
+
+        prop "does not affect current score" $ \s u p ts -> do
+          let (before, after) = states s u p ts
+          currentScore after `shouldBe` currentScore before
+
+        prop "does not affect unbroken streaks" $ \s u p ts -> do
+          let (before, after) = states s u p ts
+          unbroken after `shouldBe` unbroken before
+
+      describe "when the current one counts" $ do
+        let states s u p ts = (before, after)
+              where
+                before = s {counts = True}
+                after = march before (imbue u ts (PuzzleSet p))
+
+        -- prop "bumps score for everyone who had solved the puzzle" $ \s u p ts -> do
+        --   let (before, after) = states s u p ts
+        --   True `shouldBe` False
+        -- prop "resets the score for everyone who had not solved the puzzle" $ \s u p ts -> do
+        --   let (before, after) = states s u p ts
+        --   True `shouldBe` False
+
+        prop "resets the current score counter" $ \s u p ts -> do
+          let (_, after) = states s u p ts
+          currentScore after `shouldBe` empty
 
   describe "PUT /v2/puzzle" $ do
     let pastEvents =
