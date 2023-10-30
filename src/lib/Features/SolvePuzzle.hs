@@ -17,11 +17,11 @@ instance FromJSON (WithUser SubmitSolution) where
     withObject "solution" $ \v -> do
       u <- User <$> v .: "user"
       solution <- v .: "solution"
-      return $ withUser u $ SubmitSolution (Word solution)
+      return $ WithUser u $ SubmitSolution (Word solution)
 
 solvePuzzle :: Dictionary -> WithUser SubmitSolution -> NiancatState -> WithUser [NiancatEvent]
-solvePuzzle dict (WithUser (u, SubmitSolution w)) s =
-  withUser u $ case currentPuzzle s of
+solvePuzzle dict (WithUser u (SubmitSolution w)) s =
+  WithUser u $ case currentPuzzle s of
     Just p ->
       if solves dict w p
         then [CorrectSolutionSubmitted w $ firstTime u w s]

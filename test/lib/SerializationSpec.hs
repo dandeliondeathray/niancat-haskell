@@ -34,7 +34,7 @@ spec = do
     prop "SetPuzzle" $
       \p ->
         let input = encode $ object ["puzzle" .= p, "user" .= String "foo"]
-            expected = Right $ withUser "foo" $ SetPuzzle (puzzle p)
+            expected = Right $ withUser "foo" (SetPuzzle (puzzle p))
             actual = eitherDecode input
          in actual `shouldBe` expected
 

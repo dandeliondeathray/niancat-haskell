@@ -13,10 +13,10 @@ instance FromJSON (WithUser SetPuzzle) where
   parseJSON = withObject "puzzle" $ \o -> do
     p <- puzzle <$> o .: "puzzle"
     u <- User <$> o .: "user"
-    return $ withUser u $ SetPuzzle p
+    return $ WithUser u $ SetPuzzle p
 
 setPuzzle :: Dictionary -> WithUser SetPuzzle -> NiancatState -> WithUser [NiancatEvent]
-setPuzzle dict (WithUser (u, SetPuzzle p)) s = withUser u $ set (currentPuzzle s) (valid dict p)
+setPuzzle dict (WithUser u (SetPuzzle p)) s = WithUser u $ set (currentPuzzle s) (valid dict p)
   where
     set _ False = [InvalidPuzzleSet p]
     set (Just p') True | p' == p = [SamePuzzleSet p']

@@ -32,8 +32,8 @@ command resolver = do
     now <- clock'
     (u, es) <- atomically $ do
       s <- readTVar ts
-      let WithUser (u, es) = resolver s
-      let s' = foldl apply s (fmap (withUser u) es)
+      let WithUser u es = resolver s
+      let s' = foldl apply s (fmap (WithUser u) es)
       when (s' /= s) (writeTVar ts s')
       return (u, es)
     append (fmap (imbue u now) es) st

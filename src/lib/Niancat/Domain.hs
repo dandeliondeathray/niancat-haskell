@@ -15,13 +15,13 @@ newtype User
   = User Text
   deriving (Show, Eq, Ord)
 
-newtype WithUser a = WithUser (User, a) deriving (Show, Eq)
+data WithUser a = WithUser User a deriving (Show, Eq)
 
-withUser :: User -> a -> WithUser a
-withUser = curry WithUser
+withUser :: Text -> a -> WithUser a
+withUser = WithUser . User
 
 withoutUser :: WithUser a -> a
-withoutUser (WithUser (_, a)) = a
+withoutUser (WithUser _ a) = a
 
 instance IsString User where
   fromString :: String -> User
@@ -52,13 +52,13 @@ data NiancatEvent
   deriving (Show, Eq)
 
 apply :: NiancatState -> WithUser NiancatEvent -> NiancatState
-apply s (WithUser (_, PuzzleSet p)) = s {currentPuzzle = Just p}
-apply s (WithUser (_, CorrectSolutionSubmitted _ (FirstTime False))) = s
-apply s (WithUser (u, CorrectSolutionSubmitted w (FirstTime True))) = registerSolver u w s
+apply s (WithUser _ (PuzzleSet p)) = s {currentPuzzle = Just p}
+apply s (WithUser _ (CorrectSolutionSubmitted _ (FirstTime False))) = s
+apply s (WithUser u (CorrectSolutionSubmitted w (FirstTime True))) = registerSolver u w s
 apply s _ = s
 
 applyAll :: NiancatState -> WithUser [NiancatEvent] -> NiancatState
-applyAll s (WithUser (u, es)) = foldl apply s (fmap (withUser u) es)
+applyAll s (WithUser u es) = foldl apply s (fmap (WithUser u) es)
 
 registerSolver :: User -> Word -> NiancatState -> NiancatState
 registerSolver u w s = s {solvers = Map.alter appendUser w $ solvers s}
