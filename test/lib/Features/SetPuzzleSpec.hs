@@ -10,8 +10,10 @@ import Features.SetPuzzle
 import Helpers
 import Matchers
 import Niancat.Domain
+import Niancat.Events
 import Niancat.Puzzle
 import Niancat.Replies
+import Niancat.State
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON

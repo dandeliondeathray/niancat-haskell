@@ -2,9 +2,9 @@
 
 module Features.GetPuzzle where
 
-import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
+import Niancat.State
 import TextShow
 
 data GetPuzzle

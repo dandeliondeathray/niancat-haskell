@@ -11,8 +11,8 @@ import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.Test (SResponse)
 import Niancat.Dictionary
-import Niancat.Domain
 import Niancat.Puzzle
+import Niancat.State
 import Persistence.Events
 import Persistence.InMemory
 import Service

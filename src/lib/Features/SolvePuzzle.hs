@@ -7,7 +7,9 @@ import Data.Aeson
 import Data.Maybe
 import Niancat.Dictionary
 import Niancat.Domain
+import Niancat.Events
 import Niancat.Puzzle
+import Niancat.State
 import Prelude hiding (Word, lookup)
 
 newtype SubmitSolution = SubmitSolution Word deriving (Show, Eq)

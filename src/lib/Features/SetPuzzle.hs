@@ -5,7 +5,9 @@ module Features.SetPuzzle where
 import Data.Aeson
 import Niancat.Dictionary
 import Niancat.Domain
+import Niancat.Events
 import Niancat.Puzzle
+import Niancat.State
 
 newtype SetPuzzle = SetPuzzle Puzzle deriving (Show, Eq)
 

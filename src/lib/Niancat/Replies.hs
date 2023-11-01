@@ -2,7 +2,7 @@ module Niancat.Replies where
 
 import Data.Aeson
 import Data.Text
-import Niancat.Domain
+import Niancat.Events
 import TextShow
 
 data Message
@@ -26,3 +26,6 @@ instance Response NiancatEvent where
   messages (PuzzleSet p) = [Reply "OK!", Notification $ mconcat ["Dagens nia är **", showt p, "**"]]
   messages (SamePuzzleSet p) = [Reply $ mconcat ["Nian är redan satt till ", showt p]]
   messages (InvalidPuzzleSet p) = [Reply $ mconcat ["Pusslet " <> showt p <> " är inte giltigt!"]]
+  messages (UnsolutionSaved _) = [Reply "Sparat."]
+  messages (UnsolutionPending _ p) = [Reply $ "Inget ord i olösningen matchar pusslet " <> showt p <> ". Skriv !olösning för att bekräfta."]
+  messages UnsolutionSubmittedWithNoPuzzleSet = [Reply "Nian är inte satt än!"]

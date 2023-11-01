@@ -2,7 +2,7 @@ module Context where
 
 import Control.Concurrent.STM
 import Data.Time (UTCTime, getCurrentTime)
-import Niancat.Domain
+import Niancat.State
 import Persistence.Events
 import Persistence.Sqlite
 

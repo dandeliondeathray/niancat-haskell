@@ -5,6 +5,7 @@ import Data.Aeson.Types
 import Data.Text
 import Data.Time
 import Niancat.Domain
+import Niancat.Events
 import Niancat.Puzzle
 
 data EventMetadata = Meta User UTCTime
@@ -41,6 +42,9 @@ eventType (SamePuzzleSet _) = "puzzle-set:same"
 eventType (CorrectSolutionSubmitted {}) = "solution-submitted:correct"
 eventType (IncorrectSolutionSubmitted _) = "solution-submitted:incorrect"
 eventType SolutionSubmittedWithNoPuzzleSet = "solution-submitted:no-puzzle-set"
+eventType (UnsolutionSaved _) = "unsolution:saved"
+eventType (UnsolutionPending _ _) = "unsolution:pending"
+eventType UnsolutionSubmittedWithNoPuzzleSet = "unsolution:ignored:no-puzzle-set"
 
 eventData :: NiancatEvent -> Value
 eventData (PuzzleSet p) = object ["puzzle" .= show p]
@@ -49,6 +53,9 @@ eventData (SamePuzzleSet p) = object ["puzzle" .= show p]
 eventData (CorrectSolutionSubmitted (Word w) f) = object ["word" .= w, "first-time" .= isFirstTime f]
 eventData (IncorrectSolutionSubmitted w) = object ["word" .= show w]
 eventData SolutionSubmittedWithNoPuzzleSet = object []
+eventData (UnsolutionSaved t) = object ["text" .= show t]
+eventData (UnsolutionPending t p) = object ["text" .= show t, "puzzle" .= show p]
+eventData UnsolutionSubmittedWithNoPuzzleSet = object []
 
 parserFor :: Text -> Either String (Value -> Parser NiancatEvent)
 parserFor t = do

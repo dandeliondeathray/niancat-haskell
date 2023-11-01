@@ -15,6 +15,7 @@ import Features.GetPuzzle
 import Features.SetPuzzle
 import Features.SolvePuzzle
 import Features.Streaks
+import Features.Unsolutions
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger
 import Niancat.Dictionary
@@ -30,6 +31,7 @@ type NiancatAPI =
     :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "v2" :> "streaks" :> Get '[JSON] [Message]
+    :<|> "v2" :> "unsolutions" :> ReqBody '[JSON] (WithUser SubmitUnsolution) :> Post '[JSON] [Message]
     :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [EventWithMeta]
 
 niancatAPI :: Proxy NiancatAPI
@@ -43,6 +45,7 @@ niancat dict s = server s niancatAPI features
         :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
         :<|> command . solvePuzzle dict
         :<|> project streaks
+        :<|> command . submitUnsolution
         :<|> debug events
 
 nt :: (Store s) => Ctx s -> AppM s a -> Handler a

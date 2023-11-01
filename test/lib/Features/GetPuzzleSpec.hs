@@ -3,9 +3,9 @@ module Features.GetPuzzleSpec where
 import Data.Default.Class
 import Helpers
 import Matchers
-import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
+import Niancat.State
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.QuickCheck ()

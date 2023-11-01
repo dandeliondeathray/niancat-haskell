@@ -11,6 +11,7 @@ import Network.Wai.Test
 import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
+import Niancat.State
 import Test.Hspec
 import Test.Hspec.Wai hiding (get)
 import Test.Hspec.Wai.JSON

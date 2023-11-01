@@ -1,7 +1,7 @@
 module PuzzleSpec where
 
 import Data.List
-import Data.Text.Lazy
+import Data.Text
 import GHC.Exts
 import Niancat.Puzzle
 import Test.Hspec
@@ -17,9 +17,9 @@ spec = describe "Puzzles are equal" $ do
      in puzzle (sorted x) `shouldBe` puzzle x
   prop "if they have the same letters, but in different casing" $ \x ->
     puzzle (toLower x) `shouldBe` puzzle x
-  prop "if they differ only on a well-defined set of diacritics" $ \x ->
-    let denormalized = "éèÉÈáàÁÀ" `append` x
-        fixed = "eeEEaaAA" `append` x
+  it "if they differ only on a well-defined set of diacritics" $ do
+    let denormalized = "éèÉÈáàÁÀåÅäÄöÖ"
+        fixed = "eeEEaaAAåÅäÄöÖ"
      in puzzle denormalized `shouldBe` puzzle fixed
   prop "if they differ only by disallowed characters" $ \x ->
     puzzle ("_ -" `append` x) `shouldBe` puzzle x

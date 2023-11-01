@@ -7,7 +7,8 @@ import Data.Maybe (fromMaybe)
 import Data.Ord
 import Data.Text hiding (elem, empty, foldl, lines, map, unpack)
 import Data.Time
-import Niancat.Domain hiding (apply)
+import Niancat.Domain
+import Niancat.Events
 import Niancat.Replies
 import Persistence.Events
 import Text.Printf (printf)

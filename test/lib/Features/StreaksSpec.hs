@@ -3,6 +3,7 @@
 module Features.StreaksSpec where
 
 import Arbitrary
+import Data.Default.Class
 import Data.Map
 import Data.Maybe
 import Data.Time
@@ -10,8 +11,10 @@ import Features.Streaks
 import Helpers
 import Matchers
 import Niancat.Domain
+import Niancat.Events
 import Niancat.Puzzle
 import Niancat.Replies
+import Niancat.State
 import Persistence.Events
 import Test.Hspec hiding (after, before)
 import Test.Hspec.QuickCheck
@@ -110,7 +113,7 @@ spec = do
             withMeta (e, u, d) = Imbued e (Meta (User u) d)
 
     let currentState =
-          State
+          def
             { currentPuzzle = Just $ puzzle "VANTRIVAS",
               solvers = singleton (Word "VANTRIVAS") [User "foobar"]
             }
