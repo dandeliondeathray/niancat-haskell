@@ -5,7 +5,7 @@ import Data.List (nub)
 import Data.Map (Map, map, member, (!?))
 import Data.Maybe
 import Data.NonEmpty.Mixed (groupKey)
-import Data.Text.Lazy (pack)
+import Data.Text (pack)
 import GHC.Exts hiding (Word, toList)
 import Niancat.Puzzle
 import Prelude hiding (Word, map)

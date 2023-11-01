@@ -45,6 +45,7 @@ library:
     - text
     - text-show
     - time
+    - unicode-transforms
     - unordered-containers
     - vector
     - wai

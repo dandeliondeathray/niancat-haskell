@@ -3,6 +3,7 @@
 module Niancat.Puzzle
   ( Puzzle,
     puzzle,
+    canonicalize,
     Word (..),
     Key,
     key,
@@ -12,10 +13,11 @@ module Niancat.Puzzle
 where
 
 import Data.List (sort)
-import Data.Text.Lazy hiding (filter)
+import Data.Text
+import Data.Text.Normalize
 import GHC.Exts hiding (Word)
 import TextShow
-import Prelude hiding (Word, elem, unwords)
+import Prelude hiding (Word, elem, filter, map, unwords)
 
 newtype Puzzle = Puzzle Text
 
@@ -36,19 +38,10 @@ wkey :: Word -> Key
 wkey (Word w) = key w
 
 canonicalize :: Text -> Text
-canonicalize = toUpper . clean . removeDiacritics . toCaseFold
+canonicalize = toUpper . normalize NFKC . filter (`notElem` (diacritics ++ separators)) . normalize NFKD
   where
-    removeDiacritics =
-      Data.Text.Lazy.map
-        ( \case
-            c'
-              | c' `elem` "áà" -> 'a'
-              | c' `elem` "éè" -> 'e'
-              | otherwise -> c'
-        )
-    disallowedChars = "[- _]" :: String
-    clean :: Text -> Text
-    clean = fromList . filter (`notElem` disallowedChars) . toList
+    separators = "[- _]"
+    diacritics = "\x0300\x0301\x0302\x0304"
 
 instance Eq Puzzle where
   Puzzle a == Puzzle b = key a == key b
@@ -64,13 +57,13 @@ instance Eq Key where
 
 instance TextShow Puzzle where
   showb (Puzzle x) =
-    fromLazyText . unwords . chunksOf 3 . canonicalize $ x
+    fromText . unwords . chunksOf 3 . canonicalize $ x
 
 instance TextShow Word where
-  showb (Word x) = fromLazyText . canonicalize $ x
+  showb (Word x) = fromText . canonicalize $ x
 
 instance TextShow Key where
-  showb (Key x) = fromLazyText x
+  showb (Key x) = fromText x
 
 instance Show Puzzle where
   show = toString . showb
