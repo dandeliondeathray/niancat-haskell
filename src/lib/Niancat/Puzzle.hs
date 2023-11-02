@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Niancat.Puzzle
   ( Puzzle,
     puzzle,

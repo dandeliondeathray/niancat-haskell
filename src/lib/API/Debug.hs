@@ -11,7 +11,7 @@ import Web
 
 type API = Get '[JSON] [EventWithMeta]
 
-api :: (Store a) => AppM a [EventWithMeta]
+api :: (Store s) => ServerT API (AppM s)
 api = debug events
 
 debug :: (Store s, ToJSON a) => (Ctx s -> IO a) -> AppM s a

@@ -63,6 +63,9 @@ executables:
     - -Werror
     dependencies:
     - niancat
+    - data-default-class
+    - wai
+    - wai-extra
 
 tests:
   niancat-test:

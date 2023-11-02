@@ -9,8 +9,10 @@ import Features.SetPuzzle
 import Features.SolvePuzzle
 import Features.Streaks
 import Features.Unsolutions
+import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
+import Persistence.Events
 import Servant
 import Web
 
@@ -21,6 +23,7 @@ type API =
     :<|> "streaks" :> Get '[JSON] [Message]
     :<|> "unsolutions" :> ReqBody '[JSON] (WithUser SubmitUnsolution) :> Post '[JSON] [Message]
 
+api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
   query getPuzzle
     :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
