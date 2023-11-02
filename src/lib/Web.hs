@@ -1,9 +1,12 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+
 module Web where
 
 import Context
 import Control.Concurrent.STM
 import Control.Monad.Reader
-import Data.Aeson
+import Errors
 import Niancat.Domain
 import Niancat.Events
 import Niancat.Replies
@@ -41,5 +44,8 @@ command resolver = do
     append (fmap (imbue u now) es) st
     return $ es >>= messages
 
-debug :: (Store s, ToJSON a) => (Ctx s -> IO a) -> AppM s a
-debug resolver = ask >>= liftIO . resolver
+server :: (HasServer a '[], Store s) => Ctx s -> Proxy a -> ServerT a (AppM s) -> Application
+server ctx p srv = errorsAsJson $ serve p $ hoistServer p (nt ctx) srv
+
+nt :: (Store s) => Ctx s -> AppM s a -> Handler a
+nt ctx s = runReaderT s ctx

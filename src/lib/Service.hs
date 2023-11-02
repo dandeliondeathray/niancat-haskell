@@ -4,55 +4,27 @@
 
 module Service where
 
+import qualified API.Debug as Debug
+import qualified API.V2 as V2
 import Context
-import Control.Monad.Reader
 import Data.Default.Class
 import Data.Functor
 import Data.Maybe
-import Debug.Events
-import Errors
-import Features.GetPuzzle
-import Features.SetPuzzle
-import Features.SolvePuzzle
-import Features.Streaks
-import Features.Unsolutions
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger
 import Niancat.Dictionary
-import Niancat.Domain
-import Niancat.Replies
 import Persistence.Events
 import Servant
 import System.Environment
 import Web
 
-type NiancatAPI =
-  "v2" :> "puzzle" :> Get '[JSON] [Message]
-    :<|> "v2" :> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
-    :<|> "v2" :> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
-    :<|> "v2" :> "streaks" :> Get '[JSON] [Message]
-    :<|> "v2" :> "unsolutions" :> ReqBody '[JSON] (WithUser SubmitUnsolution) :> Post '[JSON] [Message]
-    :<|> "v2" :> "debug" :> "events" :> Get '[JSON] [EventWithMeta]
+type NiancatAPI = "v2" :> V2.API :<|> "debug" :> Debug.API
 
 niancatAPI :: Proxy NiancatAPI
 niancatAPI = Proxy
 
 niancat :: (Store s) => Dictionary -> Ctx s -> Application
-niancat dict s = server s niancatAPI features
-  where
-    features =
-      query getPuzzle
-        :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
-        :<|> command . solvePuzzle dict
-        :<|> project streaks
-        :<|> command . submitUnsolution
-        :<|> debug events
-
-nt :: (Store s) => Ctx s -> AppM s a -> Handler a
-nt s x = runReaderT x s
-
-server :: (HasServer a '[], Store s) => Ctx s -> Proxy a -> ServerT a (AppM s) -> Application
-server s p srv = errorsAsJson $ serve p $ hoistServer p (nt s) srv
+niancat dict ctx = server ctx niancatAPI $ V2.api dict :<|> Debug.api
 
 getDictionary :: IO Dictionary
 getDictionary =
