@@ -24,14 +24,14 @@ newtype V1 a = V1 a
 type API =
   "puzzle" :> Get '[JSON] [Message]
     :<|> "puzzle" :> ReqBody '[JSON] (V1 (WithUser SetPuzzle)) :> Post '[JSON] [Message]
-    :<|> "solution" :> ReqBody '[JSON] (V1 (WithUser SubmitSolution)) :> Post '[JSON] [Message]
+    :<|> "solution" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "unsolution" :> Capture "user" (V1 User) :> ReqBody '[JSON] (V1 SubmitUnsolution) :> Post '[JSON] [Message]
 
 api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
   query getPuzzle
     :<|> (\r -> (++) <$> command (v1 (setPuzzle dict) r) <*> project streaks)
-    :<|> command . v1 (solvePuzzle dict)
+    :<|> command . solvePuzzle dict
     :<|> (\u -> command . v1u u submitUnsolution)
 
 v1 :: (a -> b) -> V1 a -> b
@@ -44,12 +44,6 @@ instance FromJSON (V1 (WithUser SetPuzzle)) where
   parseJSON = withObject "puzzle" $ \o -> do
     p <- puzzle <$> o .: "puzzle"
     return $ V1 $ WithUser "" $ SetPuzzle p
-
-instance FromJSON (V1 (WithUser SubmitSolution)) where
-  parseJSON = withObject "solution" $ \o -> do
-    u <- user <$> o .: "user"
-    s <- Word <$> o .: "solution"
-    return $ V1 $ WithUser u $ SubmitSolution s
 
 instance FromJSON (V1 SubmitUnsolution) where
   parseJSON = withObject "unsolution" $ \o ->
