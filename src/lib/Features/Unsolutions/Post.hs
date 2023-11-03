@@ -1,15 +1,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module Features.Unsolutions where
+module Features.Unsolutions.Post where
 
 import Data.Aeson
-import Data.Map hiding (foldl)
 import Data.Text hiding (elem, foldl)
 import Niancat.Domain
 import Niancat.Events
 import Niancat.Puzzle
 import Niancat.State
-import Persistence.Events
 import Prelude hiding (words)
 
 newtype SubmitUnsolution
@@ -29,11 +27,3 @@ submitUnsolution u (SubmitUnsolution t) s =
           where
             isFuzzyMatch = p `elem` fmap (puzzle . canonicalize) (words t)
     Nothing -> WithUser u [UnsolutionSubmittedWithNoPuzzleSet]
-
-newtype Unsolutions = Unsolutions (Map User [Text])
-
-showUnsolutionsForUser :: User -> [EventWithMeta] -> Unsolutions
-showUnsolutionsForUser u = Unsolutions . foldl (flip march) mempty
-  where
-    march (Imbued (UnsolutionSaved s) (Meta u' _)) | u == u' = insertWith (++) u [s]
-    march _ = id

@@ -5,11 +5,11 @@
 module API.V2 where
 
 import Data.Text
-import Features.GetPuzzle
-import Features.SetPuzzle
-import Features.SolvePuzzle
+import Features.Puzzle.Get
+import Features.Puzzle.Set
+import Features.Puzzle.Solve
 import Features.Streaks
-import Features.Unsolutions
+import Features.Unsolutions.Post
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies

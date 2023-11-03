@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module Features.SetPuzzle where
+module Features.Puzzle.Set where
 
 import Data.Aeson
 import Niancat.Dictionary

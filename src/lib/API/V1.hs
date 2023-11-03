@@ -7,11 +7,11 @@ module API.V1 where
 
 import Data.Aeson
 import Data.Text
-import Features.GetPuzzle
-import Features.SetPuzzle
-import Features.SolvePuzzle
+import Features.Puzzle.Get
+import Features.Unsolutions.Post
+import Features.Puzzle.Set
+import Features.Puzzle.Solve
 import Features.Streaks
-import Features.Unsolutions
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle

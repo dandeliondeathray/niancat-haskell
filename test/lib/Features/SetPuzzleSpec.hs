@@ -6,7 +6,7 @@ import Context
 import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
-import Features.SetPuzzle
+import Features.Puzzle.Set
 import Helpers
 import Matchers
 import Niancat.Domain

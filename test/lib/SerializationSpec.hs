@@ -4,7 +4,7 @@ module SerializationSpec where
 
 import Data.Aeson
 import Data.Text.Lazy
-import Features.SetPuzzle
+import Features.Puzzle.Set
 import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies

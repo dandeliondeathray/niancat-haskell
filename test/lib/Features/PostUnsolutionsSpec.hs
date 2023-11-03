@@ -1,6 +1,6 @@
 {-# LANGUAGE QuasiQuotes #-}
 
-module Features.UnsolutionsSpec where
+module Features.PostUnsolutionsSpec where
 
 import Arbitrary ()
 import Data.Default.Class

@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 
-module Features.GetPuzzle where
+module Features.Puzzle.Get where
 
 import Niancat.Puzzle
 import Niancat.Replies

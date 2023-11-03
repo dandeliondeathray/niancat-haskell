@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-module Features.SolvePuzzle where
+module Features.Puzzle.Solve where
 
 import Data.Aeson
 import Data.Maybe
