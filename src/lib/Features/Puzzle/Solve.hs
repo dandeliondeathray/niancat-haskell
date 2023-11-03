@@ -15,11 +15,8 @@ import Prelude hiding (Word, lookup)
 newtype SubmitSolution = SubmitSolution Word deriving (Show, Eq)
 
 instance FromJSON (WithUser SubmitSolution) where
-  parseJSON =
-    withObject "solution" $ \v -> do
-      u <- User <$> v .: "user"
-      solution <- v .: "solution"
-      return $ WithUser u $ SubmitSolution (Word solution)
+  parseJSON = withObject "withUser" $ \v ->
+    WithUser . User <$> v .: "user" <*> (SubmitSolution . Word <$> v .: "solution")
 
 solvePuzzle :: Dictionary -> WithUser SubmitSolution -> NiancatState -> WithUser [NiancatEvent]
 solvePuzzle dict (WithUser u (SubmitSolution w)) s =

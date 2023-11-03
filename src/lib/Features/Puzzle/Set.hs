@@ -11,6 +11,9 @@ import Niancat.State
 
 newtype SetPuzzle = SetPuzzle Puzzle deriving (Show, Eq)
 
+instance FromJSON SetPuzzle where
+  parseJSON = withObject "puzzle" $ \o -> do SetPuzzle . puzzle <$> o .: "puzzle"
+
 instance FromJSON (WithUser SetPuzzle) where
   parseJSON = withObject "puzzle" $ \o -> do
     p <- puzzle <$> o .: "puzzle"
