@@ -4,6 +4,7 @@
 
 module API.V2 where
 
+import Data.Text
 import Features.GetPuzzle
 import Features.SetPuzzle
 import Features.SolvePuzzle
@@ -21,7 +22,7 @@ type API =
     :<|> "puzzle" :> ReqBody '[JSON] (WithUser SetPuzzle) :> Put '[JSON] [Message]
     :<|> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "streaks" :> Get '[JSON] [Message]
-    :<|> "unsolutions" :> ReqBody '[JSON] (WithUser SubmitUnsolution) :> Post '[JSON] [Message]
+    :<|> "unsolutions" :> Capture "user" Text :> ReqBody '[JSON] SubmitUnsolution :> Post '[JSON] [Message]
 
 api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
@@ -29,4 +30,4 @@ api dict =
     :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
     :<|> command . solvePuzzle dict
     :<|> project streaks
-    :<|> command . submitUnsolution
+    :<|> (\u -> command . submitUnsolution (User u))

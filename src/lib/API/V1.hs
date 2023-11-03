@@ -6,6 +6,7 @@
 module API.V1 where
 
 import Data.Aeson
+import Data.Text
 import Features.GetPuzzle
 import Features.SetPuzzle
 import Features.SolvePuzzle
@@ -25,14 +26,14 @@ type API =
   "puzzle" :> Get '[JSON] [Message]
     :<|> "puzzle" :> ReqBody '[JSON] (V1 (WithUser SetPuzzle)) :> Post '[JSON] [Message]
     :<|> "solution" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
-    :<|> "unsolution" :> Capture "user" (V1 User) :> ReqBody '[JSON] (V1 SubmitUnsolution) :> Post '[JSON] [Message]
+    :<|> "unsolution" :> Capture "user" Text :> ReqBody '[JSON] (V1 SubmitUnsolution) :> Post '[JSON] [Message]
 
 api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
   query getPuzzle
     :<|> (\r -> (++) <$> command (v1 (setPuzzle dict) r) <*> project streaks)
     :<|> command . solvePuzzle dict
-    :<|> (\u -> command . v1u u submitUnsolution)
+    :<|> (\u -> command . v1 (submitUnsolution (User u)))
 
 v1 :: (a -> b) -> V1 a -> b
 v1 f (V1 x) = f x
@@ -48,6 +49,3 @@ instance FromJSON (V1 (WithUser SetPuzzle)) where
 instance FromJSON (V1 SubmitUnsolution) where
   parseJSON = withObject "unsolution" $ \o ->
     V1 . SubmitUnsolution <$> (o .: "unsolution")
-
-instance FromHttpApiData (V1 User) where
-  parseUrlPiece = Right . V1 . User

@@ -6,6 +6,7 @@ import Arbitrary ()
 import Data.Default.Class
 import Data.Map
 import Data.Text
+import Data.Text.Encoding (encodeUtf8)
 import Data.Time
 import Helpers
 import Matchers
@@ -19,7 +20,9 @@ import Test.Hspec.Wai hiding (post)
 import Test.Hspec.Wai.JSON
 
 postUnsolution :: Text -> Text -> WaiSession st SResponse
-postUnsolution u t = postJson "v2/unsolutions" [json|{"user": #{u}, "text": #{t}}|]
+postUnsolution u t = do
+  let path = encodeUtf8 $ "v2/unsolutions/" <> u
+  postJson path [json|{"text": #{t}}|]
 
 spec :: Spec
 spec = do
