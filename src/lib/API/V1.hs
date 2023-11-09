@@ -8,10 +8,10 @@ module API.V1 where
 import Data.Aeson
 import Data.Text
 import Features.Puzzle.Get
-import Features.Unsolutions.Post
 import Features.Puzzle.Set
 import Features.Puzzle.Solve
 import Features.Streaks
+import Features.Unsolutions.Post
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
@@ -31,15 +31,15 @@ type API =
 api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
   query getPuzzle
-    :<|> (\r -> (++) <$> command (v1 (setPuzzle dict) r) <*> project streaks)
-    :<|> command . solvePuzzle dict
-    :<|> (\u -> command . v1 (submitUnsolution (User u)))
+    :<|> command (v1 (setPuzzle dict)) ><>> project streaks
+    :<|> command (solvePuzzle dict)
+    :<|> withUserFromPath (command $ v1u submitUnsolution)
 
 v1 :: (a -> b) -> V1 a -> b
 v1 f (V1 x) = f x
 
-v1u :: V1 User -> (WithUser a -> b) -> V1 a -> b
-v1u (V1 u) f (V1 x) = f (WithUser u x)
+v1u :: (WithUser a -> b) -> WithUser (V1 a) -> b
+v1u f (WithUser u (V1 x)) = f (WithUser u x)
 
 instance FromJSON (V1 (WithUser SetPuzzle)) where
   parseJSON = withObject "puzzle" $ \o -> do

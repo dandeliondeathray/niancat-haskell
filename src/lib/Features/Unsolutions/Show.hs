@@ -13,12 +13,12 @@ import Niancat.Replies
 import Persistence.Events
 import Prelude hiding (lookup, null)
 
-data UnsolutionsFor = UnsolutionsFor User [(UTCTime, Text)]
+data UnsolutionsForUser = UnsolutionsFor User [(UTCTime, Text)]
 
-showUnsolutionsForUser :: User -> [EventWithMeta] -> UnsolutionsFor
+showUnsolutionsForUser :: User -> [EventWithMeta] -> UnsolutionsForUser
 showUnsolutionsForUser u = UnsolutionsFor u . fromMaybe [] . lookup u . foldl (flip march) mempty
 
-instance Response UnsolutionsFor where
+instance Response UnsolutionsForUser where
   messages (UnsolutionsFor _ []) = [Reply "Inga olösningar satta."]
   messages (UnsolutionsFor _ unsolutions) = [Reply $ listUnsolutions unsolutions]
 

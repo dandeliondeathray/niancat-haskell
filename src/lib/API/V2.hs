@@ -10,6 +10,7 @@ import Features.Puzzle.Set
 import Features.Puzzle.Solve
 import Features.Streaks
 import Features.Unsolutions.Post
+import Features.Unsolutions.Show
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Replies
@@ -23,11 +24,15 @@ type API =
     :<|> "solutions" :> ReqBody '[JSON] (WithUser SubmitSolution) :> Post '[JSON] [Message]
     :<|> "streaks" :> Get '[JSON] [Message]
     :<|> "unsolutions" :> Capture "user" Text :> ReqBody '[JSON] SubmitUnsolution :> Post '[JSON] [Message]
+    :<|> "unsolutions" :> Get '[JSON] [Message]
+    :<|> "unsolutions" :> Capture "user" Text :> Get '[JSON] [Message]
 
 api :: (Store s) => Dictionary -> ServerT API (AppM s)
 api dict =
   query getPuzzle
-    :<|> (\req -> (++) <$> command (setPuzzle dict req) <*> project streaks)
-    :<|> command . solvePuzzle dict
+    :<|> command (setPuzzle dict) ><>> project showUnsolutionsForEverybody ><>> project streaks
+    :<|> command (solvePuzzle dict)
     :<|> project streaks
-    :<|> (\u -> command . submitUnsolution (User u))
+    :<|> withUserFromPath (command submitUnsolution)
+    :<|> project showUnsolutionsForEverybody
+    :<|> userFromPath (project1 showUnsolutionsForUser)
