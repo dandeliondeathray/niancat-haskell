@@ -1,10 +1,10 @@
-module DictionarySpec where
+module Niancat.DictionarySpec where
 
-import Arbitrary
+import Control.Arbitrary.Instance
 import Data.Map
-import Helpers
 import Niancat.Dictionary
 import Niancat.Puzzle
+import Test.Helpers
 import Test.Hspec
 import Test.Hspec.QuickCheck
 

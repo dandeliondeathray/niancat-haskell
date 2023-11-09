@@ -2,24 +2,25 @@
 
 module Features.StreaksSpec where
 
-import Arbitrary
+import Control.Arbitrary.Instance
 import Data.Default.Class
 import Data.Map
 import Data.Maybe
 import Data.Time
+import Data.Time.DSL
 import Features.Streaks
-import Helpers
-import Matchers
 import Niancat.Domain
 import Niancat.Events
 import Niancat.Puzzle
 import Niancat.Replies
 import Niancat.State
 import Persistence.Events
+import Test.Helpers
 import Test.Hspec hiding (after, before)
 import Test.Hspec.QuickCheck
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
+import Test.Matchers
 import Test.QuickCheck.Monadic ()
 import Prelude hiding (lookup)
 

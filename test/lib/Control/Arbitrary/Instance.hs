@@ -1,15 +1,16 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Arbitrary where
+module Control.Arbitrary.Instance where
 
 import Control.Applicative
 import Data.Map (toList)
 import Data.Time
+import Data.Time.DSL
 import Features.Streaks
-import Helpers
 import Niancat.Dictionary
 import Niancat.Domain
 import Niancat.Puzzle
+import Test.Helpers
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary ()
 import Test.QuickCheck.Gen ()

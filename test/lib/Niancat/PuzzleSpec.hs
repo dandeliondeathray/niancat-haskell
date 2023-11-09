@@ -1,4 +1,4 @@
-module PuzzleSpec where
+module Niancat.PuzzleSpec where
 
 import Data.List
 import Data.Text

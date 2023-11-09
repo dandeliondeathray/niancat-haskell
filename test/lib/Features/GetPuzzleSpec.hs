@@ -1,14 +1,14 @@
 module Features.GetPuzzleSpec where
 
 import Data.Default.Class
-import Helpers
-import Matchers
 import Niancat.Puzzle
 import Niancat.Replies
 import Niancat.State
+import Test.Helpers
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.QuickCheck ()
+import Test.Matchers
 import Test.QuickCheck.Instances.Text ()
 
 emptyState :: NiancatState

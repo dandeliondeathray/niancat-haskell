@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
 
 module API.Debug where
 
@@ -9,7 +10,7 @@ import Persistence.Events
 import Servant
 import Web
 
-type API = Get '[JSON] [EventWithMeta]
+type API = "events" :> Get '[JSON] [EventWithMeta]
 
 api :: (Store s) => ServerT API (AppM s)
 api = debug events

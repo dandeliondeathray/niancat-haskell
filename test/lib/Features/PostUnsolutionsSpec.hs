@@ -2,22 +2,22 @@
 
 module Features.PostUnsolutionsSpec where
 
-import Arbitrary ()
+import Control.Arbitrary.Instance ()
 import Data.Default.Class
 import Data.Map
 import Data.Text
 import Data.Text.Encoding (encodeUtf8)
 import Data.Time
-import Helpers
-import Matchers
 import Network.Wai.Test
 import Niancat.Domain
 import Niancat.Puzzle
 import Niancat.Replies
 import Niancat.State
+import Test.Helpers
 import Test.Hspec hiding (pending, pendingWith)
 import Test.Hspec.Wai hiding (post)
 import Test.Hspec.Wai.JSON
+import Test.Matchers
 
 postUnsolution :: Text -> Text -> WaiSession st SResponse
 postUnsolution u t = do

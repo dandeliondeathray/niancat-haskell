@@ -17,12 +17,13 @@ newtype SubmitUnsolution
 instance FromJSON SubmitUnsolution where
   parseJSON = withObject "unsolution" $ \v -> SubmitUnsolution <$> (v .: "text")
 
-submitUnsolution :: User -> SubmitUnsolution -> NiancatState -> WithUser [NiancatEvent]
-submitUnsolution u (SubmitUnsolution t) s =
+submitUnsolution :: WithUser SubmitUnsolution -> NiancatState -> WithUser [NiancatEvent]
+submitUnsolution (WithUser u (SubmitUnsolution t)) s =
   case currentPuzzle s of
     Just p -> WithUser u $
       case (t, pendingUnsolution u s) of
         ("", Just t') -> [UnsolutionSaved t']
+        (t', Just t'') | t' == t'' -> [UnsolutionSaved t']
         _ -> if isFuzzyMatch then [UnsolutionSaved t] else [UnsolutionPending t p]
           where
             isFuzzyMatch = p `elem` fmap (puzzle . canonicalize) (words t)

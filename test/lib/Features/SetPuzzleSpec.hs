@@ -7,16 +7,16 @@ import Control.Concurrent.STM
 import Control.Monad.Reader
 import Data.Default.Class
 import Features.Puzzle.Set
-import Helpers
-import Matchers
 import Niancat.Domain
 import Niancat.Events
 import Niancat.Puzzle
 import Niancat.Replies
 import Niancat.State
+import Test.Helpers
 import Test.Hspec
 import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
+import Test.Matchers
 
 spec :: Spec
 spec = do

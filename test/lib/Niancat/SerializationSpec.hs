@@ -1,8 +1,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module SerializationSpec where
+module Niancat.SerializationSpec where
 
-import Arbitrary ()
+import Control.Arbitrary.Instance ()
 import Data.Aeson
 import Data.Text
 import Features.Puzzle.Set

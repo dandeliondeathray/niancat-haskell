@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Matchers
+module Test.Matchers
   ( allOf,
     atLeastOneOf,
     exactly,

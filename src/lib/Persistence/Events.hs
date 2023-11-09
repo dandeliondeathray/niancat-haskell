@@ -8,9 +8,9 @@ import Niancat.Domain
 import Niancat.Events
 import Niancat.Puzzle
 
-data EventMetadata = Meta User UTCTime
+data EventMetadata = Meta User UTCTime deriving (Show)
 
-data EventWithMeta = Imbued NiancatEvent EventMetadata
+data EventWithMeta = Imbued NiancatEvent EventMetadata deriving (Show)
 
 imbue :: User -> UTCTime -> NiancatEvent -> EventWithMeta
 imbue u t e = Imbued e (Meta u t)
