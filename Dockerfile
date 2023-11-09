@@ -18,7 +18,7 @@ RUN stack build --system-ghc --test
 RUN mkdir /build
 RUN sh -c 'cp "$(stack path --local-install-root)"/bin/niancat-exe /build/niancat'
 
-FROM ubuntu
+FROM docker.io/ubuntu:22.04
 
 COPY --from=builder /build/niancat /niancat
 
