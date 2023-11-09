@@ -9,7 +9,7 @@ COPY stack.yaml .
 COPY package.yaml .
 COPY README.md .
 
-RUN stack build --dependencies-only --test
+RUN stack build --system-ghc --dependencies-only --test
 
 COPY . .
 
@@ -18,12 +18,7 @@ RUN stack build --system-ghc --test
 RUN mkdir /build
 RUN sh -c 'cp "$(stack path --local-install-root)"/bin/niancat-exe /build/niancat'
 
-FROM alpine
-
-RUN apk add --update \
-  ca-certificates \
-  gcompat \
-  gmp
+FROM ubuntu
 
 COPY --from=builder /build/niancat /niancat
 
